@@ -1,0 +1,6 @@
+@MangaUpdater.Services.Database_HostAddress = http://localhost:5152
+
+GET {{MangaUpdater.Services.Database_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

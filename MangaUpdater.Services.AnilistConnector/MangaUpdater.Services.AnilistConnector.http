@@ -1,0 +1,6 @@
+@MangaUpdater.Services.AnilistConnector_HostAddress = http://localhost:5173
+
+GET {{MangaUpdater.Services.AnilistConnector_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

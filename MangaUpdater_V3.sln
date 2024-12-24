@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.API", "MangaUpdater.Services.API\MangaUpdater.Services.API.csproj", "{1775EE1D-7F37-44CD-A992-2245DFB8CCBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Shared", "MangaUpdater.Shared\MangaUpdater.Shared.csproj", "{6F3C7566-AB16-4A3A-A916-59DE33F137A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.Fetcher", "MangaUpdater.Services.Fetcher\MangaUpdater.Services.Fetcher.csproj", "{1F329456-D002-498D-968D-8CD4B3CEF905}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.AnilistConnector", "MangaUpdater.Services.AnilistConnector\MangaUpdater.Services.AnilistConnector.csproj", "{4C31FA92-119A-40A5-BA96-E62162A32E49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.Database", "MangaUpdater.Services.Database\MangaUpdater.Services.Database.csproj", "{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1775EE1D-7F37-44CD-A992-2245DFB8CCBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1775EE1D-7F37-44CD-A992-2245DFB8CCBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1775EE1D-7F37-44CD-A992-2245DFB8CCBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1775EE1D-7F37-44CD-A992-2245DFB8CCBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F3C7566-AB16-4A3A-A916-59DE33F137A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F3C7566-AB16-4A3A-A916-59DE33F137A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F3C7566-AB16-4A3A-A916-59DE33F137A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F3C7566-AB16-4A3A-A916-59DE33F137A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F329456-D002-498D-968D-8CD4B3CEF905}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F329456-D002-498D-968D-8CD4B3CEF905}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F329456-D002-498D-968D-8CD4B3CEF905}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F329456-D002-498D-968D-8CD4B3CEF905}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C31FA92-119A-40A5-BA96-E62162A32E49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C31FA92-119A-40A5-BA96-E62162A32E49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C31FA92-119A-40A5-BA96-E62162A32E49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C31FA92-119A-40A5-BA96-E62162A32E49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
