@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MangaUpdater.Service.Messaging\MangaUpdater.Service.Messaging.csproj" />
       <ProjectReference Include="..\MangaUpdater.Shared\MangaUpdater.Shared.csproj" />
     </ItemGroup>
 

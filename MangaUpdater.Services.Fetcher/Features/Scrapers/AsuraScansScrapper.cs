@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
+using MangaUpdater.Shared.DTOs;
 
 namespace MangaUpdater.Services.Fetcher.Features.Scrapers;
 
@@ -16,7 +17,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
     {
         _httpClient = clientFactory.CreateClient();
     }
-    public async Task<List<ChapterResult>> GetChaptersAsync(ChapterRequest request, CancellationToken cancellationToken)
+    public async Task<List<ChapterResult>> GetChaptersAsync(ChapterQueueMessageDto request, CancellationToken cancellationToken)
     {
         var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
 
@@ -33,7 +34,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
         return _chapterList;
     }
 
-    private void ProcessApiResult(ChapterRequest request, IEnumerable<HtmlNode> nodes)
+    private void ProcessApiResult(ChapterQueueMessageDto request, IEnumerable<HtmlNode> nodes)
     {
         foreach (var chapterNode in nodes)
         {

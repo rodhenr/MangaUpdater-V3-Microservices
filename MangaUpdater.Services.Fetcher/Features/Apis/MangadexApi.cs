@@ -2,6 +2,7 @@ using System.Globalization;
 using MangaUpdater.Services.Fetcher.Extensions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
+using MangaUpdater.Shared.DTOs;
 
 namespace MangaUpdater.Services.Fetcher.Features.Apis;
 
@@ -17,7 +18,7 @@ public class MangadexApi : IFetcher
         _httpClient.DefaultRequestHeaders.Add("User-Agent", "MangaUpdater/1.0");
     }
     
-    public async Task<List<ChapterResult>> GetChaptersAsync(ChapterRequest request, CancellationToken cancellationToken)
+    public async Task<List<ChapterResult>> GetChaptersAsync(ChapterQueueMessageDto request, CancellationToken cancellationToken)
     {
         var offset = 0;
 
@@ -34,7 +35,7 @@ public class MangadexApi : IFetcher
         return _chapterList;
     }
 
-    private async Task<MangaDexDto?> GetApiResult(ChapterRequest request, int offset, CancellationToken cancellationToken)
+    private async Task<MangaDexDto?> GetApiResult(ChapterQueueMessageDto request, int offset, CancellationToken cancellationToken)
     {
         var url = $"{request.FullUrl}/{ApiOptions}{offset}";
         var response = await _httpClient.GetAsync(url, cancellationToken);
@@ -47,7 +48,7 @@ public class MangadexApi : IFetcher
         return await response.Content.TryToReadJsonAsync<MangaDexDto>();
     }
 
-    private void ProcessApiResult(ChapterRequest request, List<MangaDexResponse> apiData)
+    private void ProcessApiResult(ChapterQueueMessageDto request, List<MangaDexResponse> apiData)
     {
         var response = apiData
             .Select(chapter => new { chapter, ChapterNumber = float.Parse(chapter.Attributes.Chapter, CultureInfo.InvariantCulture) })

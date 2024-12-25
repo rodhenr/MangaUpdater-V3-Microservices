@@ -1,4 +1,3 @@
-using MangaUpdater.Services.Fetcher.Features.Apis;
 using MangaUpdater.Services.Fetcher.Features.Scrapers;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Shared.Enums;

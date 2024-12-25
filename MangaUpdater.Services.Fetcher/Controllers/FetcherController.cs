@@ -1,6 +1,9 @@
+using System.Text;
+using System.Text.Json;
 using MangaUpdater.Services.Fetcher.Features.Factory;
-using MangaUpdater.Services.Fetcher.Models;
+using MangaUpdater.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using RabbitMQ.Client;
 
 namespace MangaUpdater.Services.Fetcher.Controllers;
 
@@ -14,12 +17,9 @@ public class FetcherController : BaseController
     }
     
     [HttpPost]
-    public async Task<List<ChapterResult>> GetChapters(ChapterRequest request, CancellationToken ct)
+    public async Task UpdateChapters(ChapterQueueMessageDto request, CancellationToken ct)
     {
         var service = _factory.GetChapterFetcher(request.Source);
-        
-        var dados = await service.GetChaptersAsync(request, ct);
-
-        return dados;
+        var data = await service.GetChaptersAsync(request, ct);
     }
 }

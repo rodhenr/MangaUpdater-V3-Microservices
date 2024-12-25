@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.Anili
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.Database", "MangaUpdater.Services.Database\MangaUpdater.Services.Database.csproj", "{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Service.Messaging", "MangaUpdater.Service.Messaging\MangaUpdater.Service.Messaging.csproj", "{C01C3B17-674E-4D57-BE99-C99003B96B98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{451055DF-FA4D-41F7-B1DA-4DC6CACCD192}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
