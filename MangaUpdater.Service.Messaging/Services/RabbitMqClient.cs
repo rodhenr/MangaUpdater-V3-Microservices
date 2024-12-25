@@ -28,7 +28,7 @@ public class RabbitMqClient : IRabbitMqClient
 
         var body = Encoding.UTF8.GetBytes(message);
 
-        await channel.QueueDeclareAsync(queue: queueName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+        await channel.QueueDeclareAsync(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
         await channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body);
     }
 
@@ -61,5 +61,24 @@ public class RabbitMqClient : IRabbitMqClient
 
         await channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: ct);
         await Task.Delay(Timeout.Infinite, ct);
+    }
+
+    public async Task<bool> HasMessagesInQueueAsync(string queueName, CancellationToken ct)
+    {
+        await using var connection = await _factory.CreateConnectionAsync(ct);
+        await using var channel = await connection.CreateChannelAsync(cancellationToken: ct);
+        
+        if (channel is null) throw new InvalidOperationException("RabbitMQ client is not connected.");
+        
+        await channel.QueueDeclareAsync(
+            queue: queueName,
+            durable: false,
+            exclusive: false,
+            autoDelete: false, 
+            cancellationToken: ct);
+        
+        var queueDeclare = await channel.QueueDeclarePassiveAsync(queueName, ct);
+
+        return queueDeclare.MessageCount > 0;
     }
 }

@@ -77,7 +77,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
         throw new FormatException("Invalid date format.");
     }
 
-    private static float ExtractNumberFromString(string input)
+    private static decimal ExtractNumberFromString(string input)
     {
         var match = MyRegex().Match(input);
 
@@ -85,7 +85,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
 
         var numericPart = match.Groups[1].Value;
 
-        if (float.TryParse(numericPart, NumberStyles.Float, CultureInfo.InvariantCulture, out var floatResult))
+        if (decimal.TryParse(numericPart, NumberStyles.Float, CultureInfo.InvariantCulture, out var floatResult))
             return floatResult;
         if (int.TryParse(numericPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out var intResult))
             return intResult;

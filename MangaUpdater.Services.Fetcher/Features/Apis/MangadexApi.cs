@@ -8,7 +8,7 @@ namespace MangaUpdater.Services.Fetcher.Features.Apis;
 
 public class MangadexApi : IFetcher
 {
-    private const string ApiOptions = "feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=500&offset=";
+    private const string ApiOptions = "feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=200&offset=";
     private readonly HttpClient _httpClient;
     private readonly List<ChapterResult> _chapterList = [];
     
@@ -32,7 +32,10 @@ public class MangadexApi : IFetcher
             offset += 200;
         }
 
-        return _chapterList;
+        return _chapterList
+            .GroupBy(x => decimal.Parse(x.Number, CultureInfo.InvariantCulture))
+            .Select(x => x.OrderBy(y => y.Date).First())
+            .ToList();
     }
 
     private async Task<MangaDexDto?> GetApiResult(ChapterQueueMessageDto request, int offset, CancellationToken cancellationToken)
@@ -51,17 +54,20 @@ public class MangadexApi : IFetcher
     private void ProcessApiResult(ChapterQueueMessageDto request, List<MangaDexResponse> apiData)
     {
         var response = apiData
-            .Select(chapter => new { chapter, ChapterNumber = float.Parse(chapter.Attributes.Chapter, CultureInfo.InvariantCulture) })
-            .Where(x => !(x.ChapterNumber <= request.LastChapterNumber))
-            .Select(x => x.chapter);
+            .Select(c => new
+            {
+                ChapterNumber = decimal.Parse(c.Attributes.Chapter, CultureInfo.InvariantCulture),
+                c.Attributes.CreatedAt
+            })
+            .Where(x => x.ChapterNumber > request.LastChapterNumber);
         
         foreach (var chapter in response)
         {
             _chapterList.Add(new ChapterResult(
                 request.MangaId,
                 (int)request.Source,
-                chapter.Attributes.Chapter,
-                DateTime.SpecifyKind(DateTime.Parse(chapter.Attributes.CreatedAt), DateTimeKind.Utc)
+                chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
+                DateTime.SpecifyKind(DateTime.Parse(chapter.CreatedAt), DateTimeKind.Utc)
             ));
         }
     }
