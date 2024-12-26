@@ -12,7 +12,7 @@ public class UserController : BaseController
         _userMangaCollection = new UserMangaCollection();
     }
 
-    [HttpGet("user/{username}")]
+    [HttpGet("{username}")]
     public async Task<List<AnilistUserMangaCollectionDto>> GetUserMangaCollection(string username)
     {
         return await _userMangaCollection.GetCollection(username);

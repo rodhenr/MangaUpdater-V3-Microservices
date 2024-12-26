@@ -1,6 +1,6 @@
 using MangaUpdater.Service.Messaging.Services;
 using MangaUpdater.Services.Fetcher.Features.Apis;
-using MangaUpdater.Services.Fetcher.Features.Consumers;
+using MangaUpdater.Services.Fetcher.Services;
 using MangaUpdater.Services.Fetcher.Features.Factory;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Shared.Interfaces;
@@ -19,7 +19,7 @@ builder.Services.AddTransient<IFetcher, MangadexApi>();
 //builder.Services.AddScoped<IFetcher, AsuraScansScrapper>();
 
 builder.Services.AddTransient<IRabbitMqClient, RabbitMqClient>();
-builder.Services.AddHostedService<ChapterQueueConsumer>();
+builder.Services.AddHostedService<GetChaptersBackgroundService>();
 
 var app = builder.Build();
 

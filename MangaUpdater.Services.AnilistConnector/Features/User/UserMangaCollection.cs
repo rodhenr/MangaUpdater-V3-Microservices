@@ -25,6 +25,7 @@ public class UserMangaCollection
                           entries {
                             progress
                             media {
+                              id
                               idMal
                               countryOfOrigin
                               siteUrl
@@ -53,6 +54,7 @@ public class UserMangaCollection
         .SelectMany(x => x.Entries)
         .Select(x => new AnilistUserMangaCollectionDto
         (
+          x.Media.Id ?? 0,
           x.Media.IdMal ?? 0,
           x.Media.CountryOfOrigin == "JP" ? x.Media.Title.Romaji : x.Media.Title.English,
           x.Progress ?? 0,

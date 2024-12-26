@@ -29,7 +29,7 @@ public class GetChaptersBackgroundService : BackgroundService
 
             foreach (var mangaSource in data)
             {
-                await _rabbitMqClient.PublishAsync("get-chapters", JsonSerializer.Serialize(mangaSource));
+                await _rabbitMqClient.PublishAsync("get-chapters", JsonSerializer.Serialize(mangaSource), stoppingToken);
             }
 
             await Task.Delay(TimeSpan.FromHours(3), stoppingToken);

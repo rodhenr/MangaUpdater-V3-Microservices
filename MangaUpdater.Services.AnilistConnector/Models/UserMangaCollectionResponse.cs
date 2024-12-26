@@ -24,6 +24,7 @@ public class Entry
 public class Media
 {
     public string CountryOfOrigin { get; set; }
+    public int? Id { get; set; }
     public int? IdMal { get; set; }
     public string SiteUrl { get; set; }
     public CoverImage CoverImage { get; set; }
