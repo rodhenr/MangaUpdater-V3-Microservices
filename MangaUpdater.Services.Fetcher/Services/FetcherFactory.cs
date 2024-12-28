@@ -2,7 +2,7 @@ using MangaUpdater.Services.Fetcher.Features.Scrapers;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Shared.Enums;
 
-namespace MangaUpdater.Services.Fetcher.Features.Factory;
+namespace MangaUpdater.Services.Fetcher.Services;
 
 [RegisterSingleton]
 public class FetcherFactory

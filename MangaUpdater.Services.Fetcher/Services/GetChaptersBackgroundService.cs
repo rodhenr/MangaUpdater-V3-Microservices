@@ -1,5 +1,4 @@
 using System.Text.Json;
-using MangaUpdater.Services.Fetcher.Features.Factory;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Interfaces;
 

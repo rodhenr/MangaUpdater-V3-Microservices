@@ -25,9 +25,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
         htmlDoc.LoadHtml(html);
             
         var chapterNodes = htmlDoc.DocumentNode
-            .SelectNodes("//div/h3/a[contains(., 'Chapter')]/ancestor::div[1]")
-            .Descendants("h3")
-            .Where(h3 => h3.Descendants("a").Any(a => a.InnerText.Contains("Chapter")));
+            .SelectNodes("//a[.//h3[contains(text(), 'Chapter')] and not(ancestor::div[contains(@class, 'grid')])]");
         
         ProcessApiResult(request, chapterNodes);
 
@@ -38,19 +36,13 @@ public sealed partial class AsuraScansScrapper : IFetcher
     {
         foreach (var chapterNode in nodes)
         {
-            var chapterNumberString = chapterNode.Descendants("a")
-                .First()
-                .GetAttributeValue("href", "")
-                .Split('/')
-                .LastOrDefault()?
-                .Trim() ?? throw new InvalidOperationException("Chapter number is invalid.");
-            
+            var url = chapterNode.GetAttributeValue("href", string.Empty);;
+            var chapterNumberString = chapterNode.SelectSingleNode(".//h3[contains(text(), 'Chapter')]").InnerText;
             var chapterNumber = ExtractNumberFromString(chapterNumberString);
+            
             if (chapterNumber <= request.LastChapterNumber) break;
 
-            var chapterDateString = chapterNode.NextSibling?.InnerText.Trim() 
-                                    ?? throw new InvalidOperationException("Chapter date is invalid.");
-
+            var chapterDateString = chapterNode.SelectSingleNode(".//h3[contains(@class, 'text-[#A2A2A2]')]").InnerText;
             var parsedDate = ParseDate(chapterDateString);
             var chapterDate = new DateTime(parsedDate.Year, parsedDate.Month, parsedDate.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Utc);
 
@@ -58,7 +50,9 @@ public sealed partial class AsuraScansScrapper : IFetcher
                 request.MangaId, 
                 (int)request.Source,
                 chapterNumber.ToString(CultureInfo.InvariantCulture),
-                DateTime.SpecifyKind(chapterDate, DateTimeKind.Utc));
+                DateTime.SpecifyKind(chapterDate, DateTimeKind.Utc),
+                url is not null ? $"https://asuracomic.net/series/{url}" : url
+            );
 
             _chapterList.Add(chapter);
         }
