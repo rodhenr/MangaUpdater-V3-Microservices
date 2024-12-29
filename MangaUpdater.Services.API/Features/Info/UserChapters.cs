@@ -11,14 +11,18 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly JsonSerializerOptions _jsonOptions;
+    private readonly string _anilistConnectorMicroserviceUrl;
+    private readonly string _databaseMicroserviceUrl;
 
-    public UserChaptersHandler(IHttpClientFactory httpClientFactory)
+    public UserChaptersHandler(IConfiguration configuration, IHttpClientFactory httpClientFactory)
     {
         _httpClientFactory = httpClientFactory;
         _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         };
+        _anilistConnectorMicroserviceUrl = configuration["Microservices:AnilistConnector"] ?? throw new Exception("Anilist connector url is not configured.");
+        _databaseMicroserviceUrl = configuration["Microservices:Database"] ?? throw new Exception("Database url is not configured.");;
     }
 
     public async Task<List<UserChaptersDto>> Handle(UserChaptersQuery request, CancellationToken cancellationToken)
@@ -38,12 +42,11 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
             
             var info = new UserChaptersDto(
                 manga.IdMyAnimeList,
-                manga.UrlAnilist,
+                manga.UrlMyAnimeList,
                 manga.IdAnilist,
                 manga.UrlAnilist,
                 mangaInfo.TitleRomaji,
                 mangaInfo.TitleEnglish,
-                lastChapterFromSource >= manga.UserLastChapterRead,
                 lastChapterFromSource,
                 manga.UserLastChapterRead
             );
@@ -58,7 +61,7 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
     {
         var client = _httpClientFactory.CreateClient();
         
-        var response = await client.GetAsync($"https://localhost:7281/api/user/{request.Username}", cancellationToken);
+        var response = await client.GetAsync($"{_anilistConnectorMicroserviceUrl}/api/user/{request.Username}", cancellationToken);
         
         response.EnsureSuccessStatusCode();
         
@@ -72,7 +75,7 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
     {
         var client = _httpClientFactory.CreateClient();
         
-        var response = await client.GetAsync($"https://localhost:7142/api/manga", cancellationToken);
+        var response = await client.GetAsync($"{_databaseMicroserviceUrl}/api/manga", cancellationToken);
         
         response.EnsureSuccessStatusCode();
         

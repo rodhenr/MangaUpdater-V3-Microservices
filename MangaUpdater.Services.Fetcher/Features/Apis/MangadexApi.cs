@@ -67,8 +67,7 @@ public class MangadexApi : IFetcher
                 request.MangaId,
                 (int)request.Source,
                 chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
-                DateTime.SpecifyKind(DateTime.Parse(chapter.CreatedAt), DateTimeKind.Utc),
-                ""
+                DateTime.SpecifyKind(DateTime.Parse(chapter.CreatedAt), DateTimeKind.Utc)
             ));
         }
     }

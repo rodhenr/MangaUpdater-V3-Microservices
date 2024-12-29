@@ -25,8 +25,8 @@ public class SaveChapterBackgroundService : BackgroundService
             var data = JsonSerializer.Deserialize<List<FetcherChapterResultDto>>(message);
             
             await saveChapters.SaveChaptersAsync(data, stoppingToken);
+            
+            await Task.Delay(TimeSpan.FromHours(3), stoppingToken);
         }, stoppingToken);
-        
-        await Task.Delay(TimeSpan.FromHours(3), stoppingToken);
     }
 }
