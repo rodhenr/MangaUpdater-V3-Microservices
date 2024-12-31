@@ -1,8 +1,25 @@
 version: "3.8"
 
 services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: MangaUpdater
+      POSTGRES_USER: usuario
+      POSTGRES_PASSWORD: 123456789!
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U usuario -d MangaUpdater"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - app_network
+
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:4-management
     container_name: rabbitmq
     ports:
       - "5672:5672"
@@ -12,21 +29,68 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     networks:
       - app_network
+    depends_on:
+      - postgres
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-  app:
+  anilist:
+    build:
+      context: .
+      dockerfile: MangaUpdater.Services.AnilistConnector/Dockerfile
+    container_name: anilist-connector
+    ports:
+      - "5000:8080"
+    networks:
+      - app_network
+
+  fetcher:
     build:
       context: .
       dockerfile: MangaUpdater.Services.Fetcher/Dockerfile
     container_name: fetcher
     depends_on:
-      - rabbitmq
-    environment:
-      - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USER=guest
-      - RABBITMQ_PASSWORD=guest
+      rabbitmq:
+        condition: service_healthy
     ports:
       - "5001:8080"
+    environment:
+      - RabbitMqSettings_Hostname=rabbitmq
+      - RabbitMqSettings_Port=5672
+      - RabbitMqSettings_Username=guest
+      - RabbitMqSettings_Password=guest
+    networks:
+      - app_network
+
+  database:
+    build:
+      context: .
+      dockerfile: MangaUpdater.Services.Database/Dockerfile
+    container_name: database
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "5002:8080"
+    environment:
+      - RabbitMqSettings_Hostname=rabbitmq
+      - RabbitMqSettings_Port=5672
+      - RabbitMqSettings_Username=guest
+      - RabbitMqSettings_Password=guest
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=MangaUpdater;Username=usuario;Password=123456789!
+    networks:
+      - app_network
+
+  api:
+    build:
+      context: .
+      dockerfile: MangaUpdater.Services.API/Dockerfile
+    container_name: api
+    ports:
+      - "5003:8080"
     networks:
       - app_network
 

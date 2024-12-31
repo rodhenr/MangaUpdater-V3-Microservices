@@ -4,7 +4,9 @@ using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Feature.Chapters;
 using MangaUpdater.Services.Database.Services;
 using MangaUpdater.Shared.Interfaces;
+using MangaUpdater.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddTransient<IRabbitMqClient, RabbitMqClient>();
+builder.Services.AddTransient<IRabbitMqClient, RabbitMqClient>(serviceProvider =>
+{
+    var settings = serviceProvider.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+
+    return new RabbitMqClient(
+        settings.HostName,
+        settings.UserName,
+        settings.Password,
+        settings.Port
+    );
+});
+
 builder.Services.AddScoped<ISaveChapters, SaveChapters>();
 
 builder.Services.AddHostedService<GetChaptersBackgroundService>();

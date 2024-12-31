@@ -1,5 +1,5 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build-env
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -14,5 +14,7 @@ RUN dotnet publish "MangaUpdater.Services.Database.csproj" -c Release -o /app/pu
 # Final stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
 WORKDIR /app
-COPY --from=build-env /app/publish .
+COPY --from=build /app/publish .
+
+EXPOSE 8080
 ENTRYPOINT ["dotnet", "MangaUpdater.Services.Database.dll"]

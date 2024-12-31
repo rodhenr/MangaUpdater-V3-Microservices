@@ -1,22 +1,20 @@
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
-
-# Initial configuration
 WORKDIR /app
-COPY ../*.sln .
-COPY ../MangaUpdater.Shared/MangaUpdater.Shared.csproj ../MangaUpdater.Shared/
-COPY . .
 
-# Restore packages && Publish the application
-WORKDIR /app/
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app/out
+# Copy csproj and restore as distinct layers
+COPY ["MangaUpdater.Services.API/MangaUpdater.Services.API.csproj", "./MangaUpdater.Services.API/"]
+RUN dotnet restore "MangaUpdater.Services.API/MangaUpdater.Services.API.csproj"
 
-# Build the runtime image
+# Copy everything else and build app
+COPY . . 
+WORKDIR "/app/MangaUpdater.Services.API"
+RUN dotnet publish "MangaUpdater.Services.API.csproj" -c Release -o /app/publish
+
+# Final stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
 WORKDIR /app
-COPY --from=build /app/out .
+COPY --from=build /app/publish .
 
-# Expose the port your application will run on
 EXPOSE 8080
-
 ENTRYPOINT ["dotnet", "MangaUpdater.Services.API.dll"]
