@@ -1,4 +1,5 @@
 using MangaUpdater.Services.Database.Feature.MangaSources;
+using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,8 +13,14 @@ public class MangaSourceController : BaseController
     {
         _sender = sender;
     }
+    
+    [HttpGet]
+    public async Task<List<MangaSourceDto>> GetMangaSources()
+    {
+        return await _sender.Send(new GetMangaSourcesQuery());
+    }
 
-    [HttpPost("")]
+    [HttpPost]
     public async Task CreateMangaSource([FromBody] CreateMangaSourceRequest request)
     {
         await _sender.Send(new CreateMangaSourceCommand(request));

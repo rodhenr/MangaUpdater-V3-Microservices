@@ -20,13 +20,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<RabbitMqSettings>(builder.Configuration.GetSection("RabbitMqSettings"));
+
 builder.Services.AddTransient<IRabbitMqClient, RabbitMqClient>(serviceProvider =>
 {
     var settings = serviceProvider.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
 
     return new RabbitMqClient(
-        settings.HostName,
-        settings.UserName,
+        settings.Hostname,
+        settings.Username,
         settings.Password,
         settings.Port
     );
@@ -43,9 +45,20 @@ builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssembly(executingAssembly);
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseCors("AllowAll");
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -54,7 +67,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

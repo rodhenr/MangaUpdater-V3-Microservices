@@ -20,7 +20,6 @@
 
     <ItemGroup>
       <Folder Include="Database\Migrations\" />
-      <Folder Include="Feature\Sources\" />
     </ItemGroup>
 
     <ItemGroup>

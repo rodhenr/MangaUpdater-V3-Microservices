@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.Datab
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Service.Messaging", "MangaUpdater.Service.Messaging\MangaUpdater.Service.Messaging.csproj", "{C01C3B17-674E-4D57-BE99-C99003B96B98}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MangaUpdater.Services.Logging", "MangaUpdater.Services.Logging\MangaUpdater.Services.Logging.csproj", "{FEFC110F-7F6B-4D7D-B5AA-1BB855CC296B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C01C3B17-674E-4D57-BE99-C99003B96B98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEFC110F-7F6B-4D7D-B5AA-1BB855CC296B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEFC110F-7F6B-4D7D-B5AA-1BB855CC296B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEFC110F-7F6B-4D7D-B5AA-1BB855CC296B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEFC110F-7F6B-4D7D-B5AA-1BB855CC296B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

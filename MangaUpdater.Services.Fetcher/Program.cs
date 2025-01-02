@@ -25,8 +25,8 @@ builder.Services.AddTransient<IRabbitMqClient, RabbitMqClient>(serviceProvider =
     var settings = serviceProvider.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
 
     return new RabbitMqClient(
-        settings.HostName,
-        settings.UserName,
+        settings.Hostname,
+        settings.Username,
         settings.Password,
         settings.Port
     );
