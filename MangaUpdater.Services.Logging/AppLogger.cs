@@ -1,9 +1,10 @@
-﻿using Serilog;
+﻿using MangaUpdater.Shared.Interfaces;
+using Serilog;
 using Serilog.Core;
 
 namespace MangaUpdater.Services.Logging;
 
-public class AppLogger
+public class AppLogger : IAppLogger
 {
     private readonly Logger _logger;
 

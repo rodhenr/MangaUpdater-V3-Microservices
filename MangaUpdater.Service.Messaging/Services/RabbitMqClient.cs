@@ -11,13 +11,13 @@ public class RabbitMqClient : IRabbitMqClient, IAsyncDisposable
     private IConnection? _connection;
     private IChannel? _channel;
 
-    public RabbitMqClient(string hostName, string userName, string password, int port)
+    public RabbitMqClient(string hostname, string username, string password, int port)
     {
         _factory = new ConnectionFactory
         {
             Port = port,
-            HostName = hostName,
-            UserName = userName,
+            HostName = hostname,
+            UserName = username,
             Password = password
         };
     }
