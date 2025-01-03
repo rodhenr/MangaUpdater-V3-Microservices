@@ -9,14 +9,20 @@ public class SaveChapterBackgroundService : BackgroundService
 {
     private readonly IRabbitMqClient _rabbitMqClient;
     private readonly IServiceProvider _serviceProvider;
-    public SaveChapterBackgroundService(IRabbitMqClient rabbitMqClient, IServiceProvider serviceProvider)
+    private readonly IAppLogger _appLogger;
+    
+    public SaveChapterBackgroundService(IRabbitMqClient rabbitMqClient, IServiceProvider serviceProvider, 
+        IAppLogger appLogger)
     {
         _rabbitMqClient = rabbitMqClient;
         _serviceProvider = serviceProvider;
+        _appLogger = appLogger;
     }
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _appLogger.LogInformation("SaveChapters is starting.");
+        
         using var scope = _serviceProvider.CreateScope();
         var saveChapters = scope.ServiceProvider.GetRequiredService<ISaveChapters>();
         
@@ -24,9 +30,11 @@ public class SaveChapterBackgroundService : BackgroundService
         {
             var data = JsonSerializer.Deserialize<List<FetcherChapterResultDto>>(message);
             
+            _appLogger.LogInformation($"Saving {data.Count} chapters.");
+            
             await saveChapters.SaveChaptersAsync(data, stoppingToken);
             
-            await Task.Delay(TimeSpan.FromHours(3), stoppingToken);
+            _appLogger.LogInformation($"Saved all chapters.");
         }, stoppingToken);
     }
 }

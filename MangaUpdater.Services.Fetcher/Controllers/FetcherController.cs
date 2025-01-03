@@ -1,9 +1,6 @@
-using System.Text;
-using System.Text.Json;
-using MangaUpdater.Services.Fetcher.Features.Factory;
+using MangaUpdater.Services.Fetcher.Services;
 using MangaUpdater.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
-using RabbitMQ.Client;
 
 namespace MangaUpdater.Services.Fetcher.Controllers;
 

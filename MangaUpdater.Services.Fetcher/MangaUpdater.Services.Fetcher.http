@@ -1,6 +1,0 @@
-@MangaUpdater.Services.Fetcher_HostAddress = http://localhost:5191
-
-GET {{MangaUpdater.Services.Fetcher_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

@@ -1,6 +1,0 @@
-@MangaUpdater.Services.API_HostAddress = http://localhost:5091
-
-GET {{MangaUpdater.Services.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
