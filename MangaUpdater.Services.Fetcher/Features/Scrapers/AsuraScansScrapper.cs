@@ -1,101 +1,86 @@
 using System.Globalization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
+using MangaUpdater.Shared.Interfaces;
 
 namespace MangaUpdater.Services.Fetcher.Features.Scrapers;
+
+public class Chapter
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+    
+    [JsonPropertyName("name")]
+    public int Number { get; set; }
+    
+    [JsonPropertyName("published_at")]
+    public DateTime PublishedAt { get; set; }
+}
+
+public class Root
+{
+    [JsonPropertyName("chapters")] 
+    public List<Chapter> Chapters { get; set; } = [];
+}
 
 [RegisterScoped]
 public sealed partial class AsuraScansScrapper : IFetcher
 {
     private readonly HttpClient _httpClient;
-    private readonly List<ChapterResult> _chapterList = [];
+    private readonly IAppLogger _appLogger;
     
-    public AsuraScansScrapper(IHttpClientFactory clientFactory)
+    public AsuraScansScrapper(IHttpClientFactory clientFactory, IAppLogger appLogger)
     {
+        _appLogger = appLogger;
         _httpClient = clientFactory.CreateClient();
     }
     public async Task<List<ChapterResult>> GetChaptersAsync(ChapterQueueMessageDto request, CancellationToken cancellationToken)
     {
-        var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
-
-        var htmlDoc = new HtmlDocument();
-        htmlDoc.LoadHtml(html);
-            
-        var chapterNodes = htmlDoc.DocumentNode
-            .SelectNodes("//div/h3/a[contains(., 'Chapter')]/ancestor::div[1]")
-            .Descendants("h3")
-            .Where(h3 => h3.Descendants("a").Any(a => a.InnerText.Contains("Chapter")));
-        
-        ProcessApiResult(request, chapterNodes);
-
-        return _chapterList;
-    }
-
-    private void ProcessApiResult(ChapterQueueMessageDto request, IEnumerable<HtmlNode> nodes)
-    {
-        foreach (var chapterNode in nodes)
+        try
         {
-            var chapterNumberString = chapterNode.Descendants("a")
-                .First()
-                .GetAttributeValue("href", "")
-                .Split('/')
-                .LastOrDefault()?
-                .Trim() ?? throw new InvalidOperationException("Chapter number is invalid.");
+            var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            var scriptNodes = htmlDoc.DocumentNode
+                .Descendants("script");
+
+            Root? chaptersFinal = null;
             
-            var chapterNumber = ExtractNumberFromString(chapterNumberString);
-            if (chapterNumber <= request.LastChapterNumber) break;
+            foreach (var scriptNode in scriptNodes.Where(x => !string.IsNullOrWhiteSpace(x.InnerHtml)))
+            {
+                var scriptContent = scriptNode.InnerHtml;
+                var match = AsuraScansRegex().Match(scriptContent);
 
-            var chapterDateString = chapterNode.NextSibling?.InnerText.Trim() 
-                                    ?? throw new InvalidOperationException("Chapter date is invalid.");
+                if (!match.Success) continue;
 
-            var parsedDate = ParseDate(chapterDateString);
-            var chapterDate = new DateTime(parsedDate.Year, parsedDate.Month, parsedDate.Day, DateTime.Now.Hour, DateTime.Now.Minute, 0, DateTimeKind.Utc);
+                var chaptersJson = match.Groups[0].Value;
+                var jsonChapters = chaptersJson.Replace("\\\"", "\"");
+                var finalJson = string.Concat("{", jsonChapters, "}");
+                chaptersFinal = JsonSerializer.Deserialize<Root>(finalJson);
+            }
 
-            var chapter = new ChapterResult(
-                request.MangaId, 
-                (int)request.Source,
-                chapterNumber.ToString(CultureInfo.InvariantCulture),
-                DateTime.SpecifyKind(chapterDate, DateTimeKind.Utc));
-
-            _chapterList.Add(chapter);
+            return chaptersFinal?.Chapters
+                .Select(x => new ChapterResult(
+                    request.MangaId,
+                    (int)request.Source,
+                    x.Number.ToString(CultureInfo.InvariantCulture),
+                    DateTime.SpecifyKind(x.PublishedAt, DateTimeKind.Utc)))
+                .ToList() ?? [];
+        } 
+        catch (Exception ex)
+        {
+            _appLogger.LogError($"An error occurred while scraping the manga '{request.MangaId}' from URL '{request.FullUrl}'.", ex);
+            return [];
         }
     }
-    
-    private static DateTime ParseDate(string dateString)
-    {
-        const string format = "MMMM d yyyy";
-        var cleanedDateString = DateParseRegex().Replace(dateString, "$1");
 
-        if (DateTime.TryParseExact(cleanedDateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
-        {
-            return parsedDate;
-        }
-        
-        throw new FormatException("Invalid date format.");
-    }
-
-    private static decimal ExtractNumberFromString(string input)
-    {
-        var match = MyRegex().Match(input);
-
-        if (!match.Success) return 0;
-
-        var numericPart = match.Groups[1].Value;
-
-        if (decimal.TryParse(numericPart, NumberStyles.Float, CultureInfo.InvariantCulture, out var floatResult))
-            return floatResult;
-        if (int.TryParse(numericPart, NumberStyles.Integer, CultureInfo.InvariantCulture, out var intResult))
-            return intResult;
-
-        throw new InvalidOperationException("Failed to parse the numeric part as either float or int.");
-    }
-
-    [GeneratedRegex(@"(\d+(\.\d+)?)")]
-    private static partial Regex MyRegex();
-    
-    [GeneratedRegex(@"(\d+)(st|nd|rd|th)")]
-    private static partial Regex DateParseRegex();
+    [GeneratedRegex("""\\\"chapters\\\":\[(\{.*?\})\]""", RegexOptions.Singleline)]
+    private static partial Regex AsuraScansRegex();
 }
