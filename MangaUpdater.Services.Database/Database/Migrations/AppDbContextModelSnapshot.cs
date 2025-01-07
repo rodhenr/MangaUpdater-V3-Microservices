@@ -92,14 +92,30 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         new
                         {
                             Id = 2,
-                            AniListId = 30013,
-                            MyAnimeListId = 13,
-                            TitleEnglish = "One Piece",
-                            TitleRomaji = "One Piece"
+                            AniListId = 121753,
+                            MyAnimeListId = 127781,
+                            TitleEnglish = "As a Reincarnated Aristocrat, I’ll Use My Appraisal Skill to Rise in the World",
+                            TitleRomaji = "Tensei Kizoku, Kantei Skill de Nariagaru: Jakushou Ryouchi wo Uketsuida node, Yuushuu na Jinzai wo Fuyashiteitara, Saikyou Ryouchi ni Natteta"
                         },
                         new
                         {
                             Id = 3,
+                            AniListId = 114048,
+                            MyAnimeListId = 123456,
+                            TitleEnglish = "The Ossan Newbie Adventurer, Trained to Death by the Most Powerful Party, Became Invincible",
+                            TitleRomaji = "Shinmai Ossan Bouken-sha, Saikyou Party ni Shinu Hodo Kitaerarete Muteki ni Naru."
+                        },
+                        new
+                        {
+                            Id = 4,
+                            AniListId = 101715,
+                            MyAnimeListId = 111466,
+                            TitleEnglish = "Saving 80,000 Gold in Another World for my Retirement",
+                            TitleRomaji = "Rougo ni Sonaete Isekai de 8-manmai no Kinka wo Tamemasu"
+                        },
+                        new
+                        {
+                            Id = 5,
                             AniListId = 163824,
                             MyAnimeListId = 157888,
                             TitleEnglish = "Revenge of the Baskerville Bloodhound",
@@ -144,14 +160,28 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         {
                             MangaId = 2,
                             SourceId = 1,
-                            Id = 3,
-                            Url = "a1c7c817-4e59-43b7-9365-09675a149a6f"
+                            Id = 2,
+                            Url = "fef2e4da-36f9-48e9-8317-2516f4b6ab14"
                         },
                         new
                         {
                             MangaId = 3,
-                            SourceId = 2,
+                            SourceId = 1,
+                            Id = 3,
+                            Url = "a2320293-f00e-43a0-8d08-1110cf26a894"
+                        },
+                        new
+                        {
+                            MangaId = 4,
+                            SourceId = 1,
                             Id = 4,
+                            Url = "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e"
+                        },
+                        new
+                        {
+                            MangaId = 5,
+                            SourceId = 2,
+                            Id = 5,
                             Url = "revenge-of-the-iron-blooded-sword-hound-da0c5e71"
                         });
                 });

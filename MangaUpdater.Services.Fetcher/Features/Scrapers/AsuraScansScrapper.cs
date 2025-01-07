@@ -67,11 +67,18 @@ public sealed partial class AsuraScansScrapper : IFetcher
             }
 
             return chaptersFinal?.Chapters
-                .Select(x => new ChapterResult(
-                    request.MangaId,
-                    (int)request.Source,
-                    x.Number.ToString(CultureInfo.InvariantCulture),
-                    DateTime.SpecifyKind(x.PublishedAt, DateTimeKind.Utc)))
+                .GroupBy(chapter => chapter.Number)
+                .Select(group =>
+                {
+                    var chapter = group.OrderBy(x => x.PublishedAt).First();
+                    
+                    return new ChapterResult(
+                        request.MangaId,
+                        (int)request.Source,
+                        chapter.Number.ToString(CultureInfo.InvariantCulture),
+                        DateTime.SpecifyKind(chapter.PublishedAt, DateTimeKind.Utc)
+                    );
+                })
                 .ToList() ?? [];
         } 
         catch (Exception ex)

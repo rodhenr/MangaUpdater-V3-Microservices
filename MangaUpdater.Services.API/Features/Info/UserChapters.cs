@@ -75,7 +75,7 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
     {
         var client = _httpClientFactory.CreateClient();
         
-        var response = await client.GetAsync($"{_databaseMicroserviceUrl}/api/manga", cancellationToken);
+        var response = await client.GetAsync($"{_databaseMicroserviceUrl}/api/manga/full", cancellationToken);
         
         response.EnsureSuccessStatusCode();
         

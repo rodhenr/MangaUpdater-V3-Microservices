@@ -21,20 +21,35 @@ public class SaveChapterBackgroundService : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _appLogger.LogInformation("SaveChapters is starting.");
-        
         using var scope = _serviceProvider.CreateScope();
         var saveChapters = scope.ServiceProvider.GetRequiredService<ISaveChapters>();
         
         await _rabbitMqClient.ConsumeAsync("save-chapters", async message =>
         {
-            var data = JsonSerializer.Deserialize<List<FetcherChapterResultDto>>(message);
-            
-            _appLogger.LogInformation($"Saving {data.Count} chapters.");
-            
-            await saveChapters.SaveChaptersAsync(data, stoppingToken);
-            
-            _appLogger.LogInformation($"Saved all chapters.");
+            try
+            {
+                var data = JsonSerializer.Deserialize<List<FetcherChapterResultDto>>(message);
+
+                if (data is null)
+                {
+                    _appLogger.LogError("DATABASE - Failed to deserialize the message.");
+                    return;
+                }
+
+                if (data.Count == 0)
+                {
+                    _appLogger.LogInformation("DATABASE - The received message contains no chapters.");
+                    return;
+                }
+                
+                await saveChapters.SaveChaptersAsync(data, stoppingToken);
+                
+                _appLogger.LogInformation($"DATABASE - Saved {data.Count} chapters for MangaId {data.First().MangaId}.");
+            }
+            catch (Exception ex)
+            {
+                _appLogger.LogError("DATABASE - Error processing message.", ex);
+            }
         }, stoppingToken);
     }
 }

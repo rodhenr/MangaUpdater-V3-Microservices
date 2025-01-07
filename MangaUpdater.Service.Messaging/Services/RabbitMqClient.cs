@@ -47,11 +47,14 @@ public class RabbitMqClient : IRabbitMqClient, IAsyncDisposable
 
             try
             {
+                Console.WriteLine($"[INFO] Received message: {message}");
                 await onMessage(message);
                 await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false, cancellationToken: ct);
+                Console.WriteLine("[INFO] Message acknowledged.");
             }
             catch (Exception ex)
             {
+                Console.WriteLine($"[ERROR] Failed to process message: {ex.Message}");
                 await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: true, cancellationToken: ct);
             }
         };

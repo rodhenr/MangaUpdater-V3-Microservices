@@ -20,33 +20,36 @@ public class GetChaptersBackgroundService : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _appLogger.LogInformation("ChapterFetcher is starting.");
-        
         await _rabbitMqClient.ConsumeAsync("get-chapters", async message =>
         {
             try
             {
                 var mangaInfo = JsonSerializer.Deserialize<ChapterQueueMessageDto>(message);
 
+                if (mangaInfo is null)
+                {
+                    _appLogger.LogError("FETCHER - Failed to deserialize the message.");
+                    return;
+                }
+                
+                _appLogger.LogInformation(
+                    $"FETCHER - Fetching chapters: Manga ID {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+
                 using var scope = _serviceProvider.CreateScope();
                 var service = scope.ServiceProvider.GetRequiredService<FetcherFactory>();
-
-                _appLogger.LogInformation(
-                    $"Fetching chapters from manga {mangaInfo.MangaId} and source {mangaInfo.Source}.");
-
                 var fetcher = service.GetChapterFetcher(mangaInfo.Source);
+                
                 var data = await fetcher.GetChaptersAsync(mangaInfo, stoppingToken);
 
-                _appLogger.LogInformation(
-                    $"Fetched {data.Count} chapters successfully from manga {mangaInfo.MangaId} and source {mangaInfo.Source}.");
-
-                await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), stoppingToken);
+                await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), 
+                    stoppingToken);
                 
-                _appLogger.LogInformation("Published chapters to RabbitMQ.");
+                _appLogger.LogInformation(
+                    $"FETCHER - Queued for processing: {data.Count} chapters for Manga ID = {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
             }
             catch (Exception ex)
             {
-                _appLogger.LogError("An error occurred in the background service.", ex);
+                _appLogger.LogError("FETCHER - Error processing message.", ex);
             }
         }, stoppingToken);
     }
