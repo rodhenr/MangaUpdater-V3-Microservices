@@ -34,6 +34,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+      
   anilist:
     build:
       context: .
@@ -110,6 +111,9 @@ services:
     container_name: api
     ports:
       - "5003:8080"
+    environment:
+      - Microservices__AnilistConnector=http://anilist-connector:8080
+      - Microservices__Database=http://database:8080
     networks:
       - app_network
 
