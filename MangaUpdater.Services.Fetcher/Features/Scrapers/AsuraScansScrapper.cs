@@ -83,7 +83,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
         } 
         catch (Exception ex)
         {
-            _appLogger.LogError($"An error occurred while scraping the manga '{request.MangaId}' from URL '{request.FullUrl}'.", ex);
+            _appLogger.LogError("Fetch", $"An error occurred while scraping the manga '{request.MangaId}' from URL '{request.FullUrl}'.", ex);
             return [];
         }
     }

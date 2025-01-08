@@ -31,15 +31,15 @@ public class GetChaptersBackgroundService : BackgroundService
             var sender = scope.ServiceProvider.GetRequiredService<ISender>();
             var data = await sender.Send(new GetMangaSourcesToFetchQuery(), stoppingToken);
 
-            _appLogger.LogInformation($"DATABASE - {data.Count} mangas to fetch.");
+            _appLogger.LogInformation("Database", $"{data.Count} mangas to fetch.");
             
             foreach (var mangaSource in data)
             {
                 await _rabbitMqClient.PublishAsync("get-chapters", JsonSerializer.Serialize(mangaSource), stoppingToken);
-                _appLogger.LogInformation($"DATABASE - Fetch chapters request has been sent for Manga ID {mangaSource.MangaId}.");
+                _appLogger.LogInformation("Database", $"Fetch chapters request has been sent for Manga ID {mangaSource.MangaId}.");
             }
 
-            _appLogger.LogInformation("DATABASE - Delaying 3 hours before getting new chapters.");
+            _appLogger.LogInformation("Database", $"Delaying 3 hours before getting new chapters.");
             await Task.Delay(TimeSpan.FromHours(3), stoppingToken);
         }
     }

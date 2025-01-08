@@ -52,6 +52,37 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.ToTable("Chapters");
                 });
 
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.LogEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Exception")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Module")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LogEvents");
+                });
+
             modelBuilder.Entity("MangaUpdater.Services.Database.Entities.Manga", b =>
                 {
                     b.Property<int>("Id")

@@ -32,23 +32,23 @@ public class SaveChapterBackgroundService : BackgroundService
 
                 if (data is null)
                 {
-                    _appLogger.LogError("DATABASE - Failed to deserialize the message.");
+                    _appLogger.LogError("Database", $"Failed to deserialize the message.");
                     return;
                 }
 
                 if (data.Count == 0)
                 {
-                    _appLogger.LogInformation("DATABASE - The received message contains no chapters.");
+                    _appLogger.LogInformation("Database", $"The received message contains no chapters.");
                     return;
                 }
                 
                 await saveChapters.SaveChaptersAsync(data, stoppingToken);
                 
-                _appLogger.LogInformation($"DATABASE - Saved {data.Count} chapters for MangaId {data.First().MangaId}.");
+                _appLogger.LogInformation("Database", $"Saved {data.Count} chapters for MangaId {data.First().MangaId}.");
             }
             catch (Exception ex)
             {
-                _appLogger.LogError("DATABASE - Error processing message.", ex);
+                _appLogger.LogError("Database", "Error processing message.", ex);
             }
         }, stoppingToken);
     }
