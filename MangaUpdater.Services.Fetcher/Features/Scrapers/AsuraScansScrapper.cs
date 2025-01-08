@@ -68,6 +68,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
 
             return chaptersFinal?.Chapters
                 .GroupBy(chapter => chapter.Number)
+                .Where(chapter => chapter.Key > request.LastChapterNumber)
                 .Select(group =>
                 {
                     var chapter = group.OrderBy(x => x.PublishedAt).First();
