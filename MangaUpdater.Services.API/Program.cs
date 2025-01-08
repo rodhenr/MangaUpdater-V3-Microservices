@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Built-in services
 builder.Services.AddControllers();
+builder.Services.AddCors();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
 
@@ -27,6 +28,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Built-in
+app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseHttpsRedirection();
 app.MapControllers();
 
