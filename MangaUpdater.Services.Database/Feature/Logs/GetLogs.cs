@@ -1,13 +1,13 @@
 using MangaUpdater.Services.Database.Database;
+using MangaUpdater.Services.Database.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace MangaUpdater.Services.Database.Feature.Logs;
 
-public record GetLogsQuery() : IRequest<List<GetLogsResponse>>;
+public record GetLogsQuery : IRequest<List<LogEvent>>;
 
-public record GetLogsResponse();
-
-public class GetLogsHandler : IRequestHandler<GetLogsQuery, List<GetLogsResponse>>
+public class GetLogsHandler : IRequestHandler<GetLogsQuery, List<LogEvent>>
 {
     private readonly AppDbContext _context;
     
@@ -16,8 +16,9 @@ public class GetLogsHandler : IRequestHandler<GetLogsQuery, List<GetLogsResponse
         _context = context;
     }
     
-    public async Task<List<GetLogsResponse>> Handle(GetLogsQuery request, CancellationToken cancellationToken)
+    public async Task<List<LogEvent>> Handle(GetLogsQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // TODO: Implement pagination
+        return await _context.LogEvents.ToListAsync(cancellationToken);
     }
 }
