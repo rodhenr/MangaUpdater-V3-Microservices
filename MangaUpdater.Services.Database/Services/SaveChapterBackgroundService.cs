@@ -35,12 +35,6 @@ public class SaveChapterBackgroundService : BackgroundService
                     _appLogger.LogError("Database", $"Failed to deserialize the message.");
                     return;
                 }
-
-                if (data.Count == 0)
-                {
-                    _appLogger.LogInformation("Database", $"The received message contains no chapters.");
-                    return;
-                }
                 
                 await saveChapters.SaveChaptersAsync(data, stoppingToken);
                 
