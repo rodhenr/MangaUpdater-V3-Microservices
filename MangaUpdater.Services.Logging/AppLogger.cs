@@ -1,6 +1,8 @@
 ﻿using MangaUpdater.Shared.Interfaces;
+using NpgsqlTypes;
 using Serilog;
 using Serilog.Core;
+using Serilog.Sinks.PostgreSQL;
 
 namespace MangaUpdater.Services.Logging;
 
@@ -8,38 +10,52 @@ public class AppLogger : IAppLogger
 {
     private readonly Logger _logger;
 
-    public AppLogger(string connectionString, string tableName = "Logs")
+    public AppLogger(string connectionString, string tableName = "LogEvents")
     {
+        Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
+        
+        var columnWriters = new Dictionary<string, ColumnWriterBase>
+        {
+            { "\"Message\"", new RenderedMessageColumnWriter() },
+            { "\"Level\"", new LevelColumnWriter() },
+            { "\"Timestamp\"", new TimestampColumnWriter() },
+            { "\"Exception\"", new ExceptionColumnWriter() },
+            { "\"Module\"", new SinglePropertyColumnWriter("Module") },
+        };
+        
         _logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.Debug() 
             .WriteTo.PostgreSQL(
                 connectionString: connectionString,
-                tableName: tableName,
-                needAutoCreateTable: true
+                tableName: "\"LogEvents\"",
+                needAutoCreateTable: true,
+                columnOptions: columnWriters
             )
             .Enrich.FromLogContext()
             .CreateLogger();
     }
 
-    public void LogInformation(string message, params object[] args)
+    public void LogInformation(string module, string message, params object[] args)
     {
-        _logger.Information(message, args);
+        _logger.ForContext("Module", module).Information(message, args);
     }
 
-    public void LogWarning(string message, params object[] args)
+    public void LogWarning(string module, string message, params object[] args)
     {
-        _logger.Warning(message, args);
+        _logger.ForContext("Module", module).Warning(message, args);
     }
 
-    public void LogError(string message, Exception? ex = null, params object[] args)
+    public void LogError(string module, string message, Exception? ex = null, params object[] args)
     {
         if (ex != null)
-            _logger.Error(ex, message, args);
+            _logger.ForContext("Module", module).Error(ex, message, args);
         else
-            _logger.Error(message, args);
+            _logger.ForContext("Module", module).Error(message, args);
     }
 
-    public void LogDebug(string message, params object[] args)
+    public void LogDebug(string module, string message, params object[] args)
     {
-        _logger.Debug(message, args);
+        _logger.ForContext("Module", module).Debug(message, args);
     }
 }
