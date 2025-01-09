@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using MangaUpdater.Services.Fetcher.Interfaces;
@@ -9,24 +8,6 @@ using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Interfaces;
 
 namespace MangaUpdater.Services.Fetcher.Features.Scrapers;
-
-public class Chapter
-{
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-    
-    [JsonPropertyName("name")]
-    public int Number { get; set; }
-    
-    [JsonPropertyName("published_at")]
-    public DateTime PublishedAt { get; set; }
-}
-
-public class Root
-{
-    [JsonPropertyName("chapters")] 
-    public List<Chapter> Chapters { get; set; } = [];
-}
 
 [RegisterScoped]
 public sealed partial class AsuraScansScrapper : IFetcher
@@ -51,7 +32,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
             var scriptNodes = htmlDoc.DocumentNode
                 .Descendants("script");
 
-            Root? chaptersFinal = null;
+            AsuraScansDto? chaptersFinal = null;
             
             foreach (var scriptNode in scriptNodes.Where(x => !string.IsNullOrWhiteSpace(x.InnerHtml)))
             {
@@ -61,9 +42,9 @@ public sealed partial class AsuraScansScrapper : IFetcher
                 if (!match.Success) continue;
 
                 var chaptersJson = match.Groups[0].Value;
-                var jsonChapters = chaptersJson.Replace("\\\"", "\"");
+                var jsonChapters = chaptersJson.Replace("\\\\\"", "\\\"").Replace("\\\"", "\"");
                 var finalJson = string.Concat("{", jsonChapters, "}");
-                chaptersFinal = JsonSerializer.Deserialize<Root>(finalJson);
+                chaptersFinal = JsonSerializer.Deserialize<AsuraScansDto>(finalJson);
             }
 
             return chaptersFinal?.Chapters
@@ -76,7 +57,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
                     return new ChapterResult(
                         request.MangaId,
                         (int)request.Source,
-                        chapter.Number.ToString(CultureInfo.InvariantCulture),
+                        chapter.Number.ToString("G", CultureInfo.InvariantCulture),
                         DateTime.SpecifyKind(chapter.PublishedAt, DateTimeKind.Utc)
                     );
                 })

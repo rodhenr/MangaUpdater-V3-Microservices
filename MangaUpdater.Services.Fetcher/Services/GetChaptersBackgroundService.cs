@@ -28,11 +28,11 @@ public class GetChaptersBackgroundService : BackgroundService
 
                 if (mangaInfo is null)
                 {
-                    _appLogger.LogError("Fetch", "Failed to deserialize the message.");
+                    _appLogger.LogError("Fetcher", "Failed to deserialize the message.");
                     return;
                 }
                 
-                _appLogger.LogInformation("Fetch", $"Fetching chapters: Manga ID {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+                _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga ID {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
 
                 using var scope = _serviceProvider.CreateScope();
                 var service = scope.ServiceProvider.GetRequiredService<FetcherFactory>();
@@ -49,11 +49,11 @@ public class GetChaptersBackgroundService : BackgroundService
                 await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), 
                     stoppingToken);
                 
-                _appLogger.LogInformation("Fetch", $"Queued for processing: {data.Count} chapters for Manga ID = {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+                _appLogger.LogInformation("Fetcher", $"Queued for processing: {data.Count} chapters for Manga ID = {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
             }
             catch (Exception ex)
             {
-                _appLogger.LogError("Fetch", "Error processing message.", ex);
+                _appLogger.LogError("Fetcher", "Error processing message.", ex);
             }
         }, stoppingToken);
     }

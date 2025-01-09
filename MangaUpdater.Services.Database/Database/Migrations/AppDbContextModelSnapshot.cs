@@ -151,6 +151,94 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MyAnimeListId = 157888,
                             TitleEnglish = "Revenge of the Baskerville Bloodhound",
                             TitleRomaji = "Cheolhyeolgeomga Sanyanggaeui Hoegwi"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            AniListId = 149332,
+                            MyAnimeListId = 146949,
+                            TitleEnglish = "The Swordmaster's Son",
+                            TitleRomaji = "Geomsul Myeongga Mangnaeadeul"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            AniListId = 153883,
+                            MyAnimeListId = 151483,
+                            TitleEnglish = "The SSS-Ranker Returns",
+                            TitleRomaji = "SSS-geup Ranker Hoegwihada"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            AniListId = 125636,
+                            MyAnimeListId = 147322,
+                            TitleEnglish = "The Max Level Hero Strikes Back!",
+                            TitleRomaji = "Man-Level Yeongung-nim-kkeseo Gwihwan Hasinda!"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            AniListId = 151025,
+                            MyAnimeListId = 150561,
+                            TitleEnglish = "Mythic Item Obtained",
+                            TitleRomaji = "Sinhwa-geup Gwisok Item-eul Son-e Neoeotda"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            AniListId = 159441,
+                            MyAnimeListId = 154587,
+                            TitleEnglish = "Pick Me Up",
+                            TitleRomaji = "Pick Me Up!, Infinite Gacha"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            AniListId = 167318,
+                            MyAnimeListId = 159916,
+                            TitleEnglish = "The Extra Is Too Powerful",
+                            TitleRomaji = "Extra-ga Neomu Gangham"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            AniListId = 166635,
+                            MyAnimeListId = 160118,
+                            TitleEnglish = "All-Master Necromancer",
+                            TitleRomaji = "Absolute Necromancer"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            AniListId = 130511,
+                            MyAnimeListId = 147995,
+                            TitleEnglish = "The Player Who Can't Level Up",
+                            TitleRomaji = "Level Up Mothaneun Player"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            AniListId = 137280,
+                            MyAnimeListId = 147392,
+                            TitleEnglish = "I'm the Max-Level Newbie",
+                            TitleRomaji = "Na Honja Man-Level Newbie"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            AniListId = 110989,
+                            MyAnimeListId = 122650,
+                            TitleEnglish = "Failure Frame: I Became the Strongest and Annihilated Everything With Low-Level Spells",
+                            TitleRomaji = "Hazurewaku no \"Joutai Ijou Skill\" de Saikyou ni Natta Ore ga Subete wo Juurin suru made"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            AniListId = 86635,
+                            MyAnimeListId = 90125,
+                            TitleEnglish = "Kaguya-sama: Love Is War",
+                            TitleRomaji = "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen"
                         });
                 });
 
@@ -214,6 +302,83 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 5,
                             Url = "revenge-of-the-iron-blooded-sword-hound-da0c5e71"
+                        },
+                        new
+                        {
+                            MangaId = 6,
+                            SourceId = 2,
+                            Id = 6,
+                            Url = "swordmasters-youngest-son-e6946e27"
+                        },
+                        new
+                        {
+                            MangaId = 7,
+                            SourceId = 2,
+                            Id = 7,
+                            Url = "return-of-the-sss-class-ranker-f6fde482"
+                        },
+                        new
+                        {
+                            MangaId = 8,
+                            SourceId = 2,
+                            Id = 8,
+                            Url = "the-max-level-hero-has-returned-cc806d84"
+                        },
+                        new
+                        {
+                            MangaId = 9,
+                            SourceId = 2,
+                            Id = 9,
+                            Url = "i-obtained-a-mythic-item-5c23ef60"
+                        },
+                        new
+                        {
+                            MangaId = 10,
+                            SourceId = 2,
+                            Id = 10,
+                            Url = "pick-me-up-infinite-gacha-e764ac18"
+                        },
+                        new
+                        {
+                            MangaId = 11,
+                            SourceId = 2,
+                            Id = 11,
+                            Url = "the-extra-is-too-strong-ac4babd7"
+                        },
+                        new
+                        {
+                            MangaId = 12,
+                            SourceId = 2,
+                            Id = 12,
+                            Url = "absolute-necromancer-f3d79560"
+                        },
+                        new
+                        {
+                            MangaId = 13,
+                            SourceId = 2,
+                            Id = 13,
+                            Url = "player-who-cant-level-up-6937decb"
+                        },
+                        new
+                        {
+                            MangaId = 14,
+                            SourceId = 2,
+                            Id = 14,
+                            Url = "solo-max-level-newbie-6fb35ee2"
+                        },
+                        new
+                        {
+                            MangaId = 15,
+                            SourceId = 1,
+                            Id = 15,
+                            Url = "0b171f64-89a5-4c37-b5f9-75cca57e8787"
+                        },
+                        new
+                        {
+                            MangaId = 16,
+                            SourceId = 1,
+                            Id = 16,
+                            Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9"
                         });
                 });
 
