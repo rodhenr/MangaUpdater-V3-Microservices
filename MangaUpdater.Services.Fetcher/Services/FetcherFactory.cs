@@ -1,3 +1,4 @@
+using MangaUpdater.Services.Fetcher.Features.Apis;
 using MangaUpdater.Services.Fetcher.Features.Scrapers;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Shared.Enums;
@@ -20,6 +21,7 @@ public class FetcherFactory
         {
             SourcesEnum.Mangadex => _serviceProvider.GetRequiredService<IFetcher>(),
             SourcesEnum.AsuraScans => _serviceProvider.GetRequiredService<AsuraScansScrapper>(),
+            SourcesEnum.VortexScans => _serviceProvider.GetRequiredService<VortexScansApi>(),
             _ => throw new Exception("No valid source found.")
         };
     }

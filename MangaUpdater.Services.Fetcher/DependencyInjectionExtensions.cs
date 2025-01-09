@@ -17,6 +17,7 @@ public static class DependencyInjectionExtensions
         services.AddSingleton<FetcherFactory>();
         services.AddTransient<IFetcher, MangadexApi>();
         services.AddTransient<AsuraScansScrapper>();
+        services.AddTransient<VortexScansApi>();
         
         AddRabbitMqServices(services, configuration);
         AddBackgroundServices(services);
