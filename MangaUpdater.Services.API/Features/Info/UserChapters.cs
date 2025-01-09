@@ -35,6 +35,7 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
         foreach (var manga in anilistUserData)
         {
             var mangaInfo = mangasInfo.FirstOrDefault(x => x.AniListId == manga.IdAnilist || x.MyAnimeListId == manga.IdMyAnimeList);
+            var lastChapter = mangaInfo?.Chapters.MaxBy(x => x.Number);
             
             var info = new UserChaptersDto(
                 manga.IdMyAnimeList,
@@ -43,8 +44,10 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
                 manga.UrlAnilist,
                 mangaInfo?.TitleRomaji ?? manga.Title,
                 mangaInfo?.TitleEnglish ?? manga.Title,
-                mangaInfo?.Chapters.Max(x => x.Number),
-                manga.UserLastChapterRead
+                lastChapter?.Number,
+                lastChapter?.Date,
+                manga.UserLastChapterRead,
+                manga.CoverImage
             );
             
             response.Add(info);
