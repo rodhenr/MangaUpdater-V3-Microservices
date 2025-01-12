@@ -27,7 +27,7 @@ public class MangaController : BaseController
     }
     
     [HttpGet("{malId:int}")]
-    public async Task<List<MangaChaptersDto>> GetMangaById(int malId)
+    public async Task<MangaChaptersDto?> GetMangaById(int malId)
     {
         return await _sender.Send(new GetMangaChaptersQuery(malId));
     }

@@ -15,6 +15,8 @@ public class Manga : BaseEntity
     [StringLength(200)]
     public required string TitleEnglish { get; set; }
     
+    public required string CoverUrl { get; set; }
+    
     [InverseProperty("Manga")]
     public virtual ICollection<Chapter> Chapters { get; set; } = new List<Chapter>();
     

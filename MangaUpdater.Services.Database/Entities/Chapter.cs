@@ -12,6 +12,8 @@ public class Chapter : BaseEntity
 
     public DateTime Date { get; set; }
     
+    public required string Url { get; set; }
+    
     [ForeignKey("MangaId")]
     [InverseProperty("Chapters")]
     public virtual Manga Manga { get; set; } = null!;

@@ -66,7 +66,8 @@ public class VortexScansApi : IFetcher
                 request.MangaId,
                 (int)request.Source,
                 chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
-                DateTime.SpecifyKind(chapter.CreatedAt, DateTimeKind.Utc)
+                DateTime.SpecifyKind(chapter.CreatedAt, DateTimeKind.Utc),
+                ""
             ));
         }
     }

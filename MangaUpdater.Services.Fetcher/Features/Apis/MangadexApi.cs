@@ -56,6 +56,7 @@ public class MangadexApi : IFetcher
         var response = apiData
             .Select(c => new
             {
+                c.Id,
                 ChapterNumber = decimal.Parse(c.Attributes.Chapter, CultureInfo.InvariantCulture),
                 c.Attributes.CreatedAt
             })
@@ -67,7 +68,8 @@ public class MangadexApi : IFetcher
                 request.MangaId,
                 (int)request.Source,
                 chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
-                DateTime.SpecifyKind(DateTime.Parse(chapter.CreatedAt), DateTimeKind.Utc)
+                DateTime.SpecifyKind(DateTime.Parse(chapter.CreatedAt), DateTimeKind.Utc),
+                $"https://mangadex.org/chapter/{chapter.Id}"
             ));
         }
     }

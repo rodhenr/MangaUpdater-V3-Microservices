@@ -20,11 +20,12 @@ public class GetMangasChaptersHandler : IRequestHandler<GetMangasChaptersQuery, 
     {
         return await _context.Mangas
             .Select(x => new MangaChaptersDto(
+                "",
                 x.MyAnimeListId,
                 x.AniListId,
                 x.TitleRomaji,
                 x.TitleEnglish,
-                x.Chapters.Select(y => new ChaptersDto(y.SourceId, y.Number, y.Date)).ToList()
+                x.Chapters.Select(y => new ChaptersDto(y.SourceId, y.Number, y.Date, y.Url)).ToList()
             ))
             .ToListAsync(cancellationToken);
     }

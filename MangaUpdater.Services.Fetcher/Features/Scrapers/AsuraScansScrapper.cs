@@ -58,7 +58,8 @@ public sealed partial class AsuraScansScrapper : IFetcher
                         request.MangaId,
                         (int)request.Source,
                         chapter.Number.ToString("G", CultureInfo.InvariantCulture),
-                        DateTime.SpecifyKind(chapter.PublishedAt, DateTimeKind.Utc)
+                        DateTime.SpecifyKind(chapter.PublishedAt, DateTimeKind.Utc),
+                        $"{request.FullUrl}/chapter/{chapter.Number}"
                     );
                 })
                 .ToList() ?? [];

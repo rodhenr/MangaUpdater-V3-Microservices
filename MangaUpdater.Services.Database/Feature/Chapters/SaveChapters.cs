@@ -27,6 +27,7 @@ public class SaveChapters : ISaveChapters
                 SourceId = x.SourceId,
                 Date = x.Date,
                 Number = Convert.ToDecimal(x.Number),
+                Url = x.Url
             })
             .ToList();
         

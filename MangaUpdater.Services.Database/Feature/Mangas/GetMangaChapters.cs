@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MangaUpdater.Services.Database.Feature.Mangas;
 
-public record GetMangaChaptersQuery(int MyAnimeListId) : IRequest<List<MangaChaptersDto>>;
+public record GetMangaChaptersQuery(int MyAnimeListId) : IRequest<MangaChaptersDto?>;
 
-public class GetMangaChaptersHandler : IRequestHandler<GetMangaChaptersQuery, List<MangaChaptersDto>>
+public class GetMangaChaptersHandler : IRequestHandler<GetMangaChaptersQuery, MangaChaptersDto?>
 {
     private readonly AppDbContext _context;
 
@@ -16,17 +16,18 @@ public class GetMangaChaptersHandler : IRequestHandler<GetMangaChaptersQuery, Li
         _context = context;
     }
 
-    public async Task<List<MangaChaptersDto>> Handle(GetMangaChaptersQuery request, CancellationToken cancellationToken)
+    public async Task<MangaChaptersDto?> Handle(GetMangaChaptersQuery request, CancellationToken cancellationToken)
     {
         return await _context.Mangas
             .Where(x => x.MyAnimeListId == request.MyAnimeListId)
             .Select(x => new MangaChaptersDto(
+                x.CoverUrl,
                 x.MyAnimeListId,
                 x.AniListId,
                 x.TitleRomaji,
                 x.TitleEnglish,
-                x.Chapters.Select(y => new ChaptersDto(y.SourceId, y.Number, y.Date)).ToList()
+                x.Chapters.Select(y => new ChaptersDto(y.SourceId, y.Number, y.Date, y.Url)).ToList()
             ))
-            .ToListAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

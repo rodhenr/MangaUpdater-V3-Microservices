@@ -23,6 +23,7 @@ public class CreateMangaHandler : IRequestHandler<CreateMangaCommand>
             AniListId = request.Manga.AniListId,
             TitleEnglish = request.Manga.TitleEnglish,
             TitleRomaji = request.Manga.TitleRomaji,
+            CoverUrl = request.Manga.CoverUrl,
         };
 
         _context.Mangas.Add(manga);
