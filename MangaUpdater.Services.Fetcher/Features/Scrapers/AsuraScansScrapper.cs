@@ -20,6 +20,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
         _appLogger = appLogger;
         _httpClient = clientFactory.CreateClient();
     }
+    
     public async Task<List<ChapterResult>> GetChaptersAsync(ChapterQueueMessageDto request, CancellationToken cancellationToken)
     {
         try

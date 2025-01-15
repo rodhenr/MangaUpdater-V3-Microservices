@@ -4,5 +4,6 @@ public enum SourcesEnum
 {
     Mangadex = 1,
     AsuraScans = 2,
-    VortexScans = 3
+    VortexScans = 3,
+    Batoto = 4,
 }

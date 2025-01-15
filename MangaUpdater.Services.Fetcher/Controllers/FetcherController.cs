@@ -1,3 +1,4 @@
+using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Services.Fetcher.Services;
 using MangaUpdater.Shared.DTOs;
 using Microsoft.AspNetCore.Mvc;
@@ -14,9 +15,9 @@ public class FetcherController : BaseController
     }
     
     [HttpPost]
-    public async Task UpdateChapters(ChapterQueueMessageDto request, CancellationToken ct)
+    public async Task<List<ChapterResult>> UpdateChapters(ChapterQueueMessageDto request, CancellationToken ct)
     {
         var service = _factory.GetChapterFetcher(request.Source);
-        var data = await service.GetChaptersAsync(request, ct);
+        return await service.GetChaptersAsync(request, ct);
     }
 }
