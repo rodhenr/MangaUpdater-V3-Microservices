@@ -3,6 +3,7 @@ using System;
 using MangaUpdater.Services.Database.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MangaUpdater.Services.Database.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250115140400_add-batoto-source")]
+    partial class addbatotosource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,15 +284,6 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MyAnimeListId = 130331,
                             TitleEnglish = "Shangri-La Frontier",
                             TitleRomaji = "Shangri-La Frontier: Kusoge Hunter, Kamige ni Idoman to su"
-                        },
-                        new
-                        {
-                            Id = 19,
-                            AniListId = 30013,
-                            CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-ulXvn0lzWvsz.jpg",
-                            MyAnimeListId = 13,
-                            TitleEnglish = "One Piece",
-                            TitleRomaji = "One Piece"
                         });
                 });
 
@@ -444,13 +438,6 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 4,
                             Id = 18,
                             Url = "81512-shangri-la-frontier-official"
-                        },
-                        new
-                        {
-                            MangaId = 19,
-                            SourceId = 4,
-                            Id = 19,
-                            Url = "83510-one-piece-official"
                         });
                 });
 
