@@ -18,7 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         builder.Entity<Source>().HasData(
             new Source { Id = 1, Name = "MangaDex", BaseUrl = "https://api.mangadex.org/manga/" },
-            new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asuracomic.net/series/" }
+            new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asuracomic.net/series/" },
+            new Source { Id = 3, Name = "VortexScans", BaseUrl = "https://vortexscans.org/api/chapters?postId=" }
         );
 
         builder.Entity<Manga>().HasData(
@@ -37,7 +38,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Manga { Id = 13, MyAnimeListId = 147995, AniListId = 130511, TitleRomaji = "Level Up Mothaneun Player", TitleEnglish = "The Player Who Can't Level Up", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx130511-4O6dF8oaiVJh.jpg" },
             new Manga { Id = 14, MyAnimeListId = 147392, AniListId = 137280, TitleRomaji = "Na Honja Man-Level Newbie", TitleEnglish = "I'm the Max-Level Newbie", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx137280-C8kbBitLxlwR.png" },
             new Manga { Id = 15, MyAnimeListId = 122650, AniListId = 110989, TitleRomaji = "Hazurewaku no \"Joutai Ijou Skill\" de Saikyou ni Natta Ore ga Subete wo Juurin suru made", TitleEnglish = "Failure Frame: I Became the Strongest and Annihilated Everything With Low-Level Spells", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx110989-DKLKwQ5ojqXD.jpg" },
-            new Manga { Id = 16, MyAnimeListId = 90125, AniListId = 86635, TitleRomaji = "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen", TitleEnglish = "Kaguya-sama: Love Is War", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx86635-EdaLQmsn86Fy.png" }
+            new Manga { Id = 16, MyAnimeListId = 90125, AniListId = 86635, TitleRomaji = "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen", TitleEnglish = "Kaguya-sama: Love Is War", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx86635-EdaLQmsn86Fy.png" },
+            new Manga { Id = 17, MyAnimeListId = 148458, AniListId = 151457, TitleRomaji = "Newbie-ga Neomu Gangham", TitleEnglish = "The Overpowered Newbie", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx151457-7v5jKk5yAnAc.png" }
         );
         
         builder.Entity<MangaSource>().HasData(
@@ -56,7 +58,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 13, MangaId = 13, SourceId = 2, Url = "player-who-cant-level-up-6937decb" },
             new MangaSource { Id = 14, MangaId = 14, SourceId = 2, Url = "solo-max-level-newbie-6fb35ee2" },
             new MangaSource { Id = 15, MangaId = 15, SourceId = 1, Url = "0b171f64-89a5-4c37-b5f9-75cca57e8787" },
-            new MangaSource { Id = 16, MangaId = 16, SourceId = 1, Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" }
+            new MangaSource { Id = 16, MangaId = 16, SourceId = 1, Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" },
+            new MangaSource { Id = 17, MangaId = 17, SourceId = 3, Url = "214" }
         );
     }
 }
