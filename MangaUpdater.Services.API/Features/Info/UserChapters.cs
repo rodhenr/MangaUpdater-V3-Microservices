@@ -1,6 +1,7 @@
 using System.Text.Json;
 using MangaUpdater.Services.API.DTOs;
 using MangaUpdater.Shared.DTOs;
+using MangaUpdater.Shared.Extensions;
 using MediatR;
 
 namespace MangaUpdater.Services.API.Features.Info;
@@ -35,7 +36,7 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
         foreach (var manga in anilistUserData)
         {
             var mangaInfo = mangasInfo.FirstOrDefault(x => x.AniListId == manga.IdAnilist || x.MyAnimeListId == manga.IdMyAnimeList);
-            var lastChapter = mangaInfo?.Chapters.MaxBy(x => x.Number);
+            var lastChapter = mangaInfo?.Chapters.OrderByDescending(x => x.Number.GetNumericPart()).FirstOrDefault();
             
             var info = new UserChaptersDto(
                 manga.IdMyAnimeList,

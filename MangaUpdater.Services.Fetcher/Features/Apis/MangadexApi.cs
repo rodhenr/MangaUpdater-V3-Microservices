@@ -3,10 +3,11 @@ using MangaUpdater.Services.Fetcher.Extensions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
+using MangaUpdater.Shared.Extensions;
 
 namespace MangaUpdater.Services.Fetcher.Features.Apis;
 
-public class MangadexApi : IFetcher
+public partial class MangadexApi : IFetcher
 {
     private const string ApiOptions = "feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=200&offset=";
     private readonly HttpClient _httpClient;
@@ -21,6 +22,7 @@ public class MangadexApi : IFetcher
     public async Task<List<ChapterResult>> GetChaptersAsync(ChapterQueueMessageDto request, CancellationToken cancellationToken)
     {
         var offset = 0;
+        var lastChapterDecimal = request.LastChapterNumber.GetNumericPart();
 
         while (true)
         {
@@ -28,13 +30,13 @@ public class MangadexApi : IFetcher
 
             if (result is null || result.Data.Count == 0) break;
 
-            ProcessApiResult(request, result.Data);
+            ProcessApiResult(request, result.Data, lastChapterDecimal);
             offset += 200;
         }
 
         return _chapterList
-            .GroupBy(x => decimal.Parse(x.Number, CultureInfo.InvariantCulture))
-            .Select(x => x.OrderBy(y => y.Date).First())
+            .GroupBy(x => x.Number)
+            .Select(x => x.OrderBy(y => y.Number.GetNumericPart()).First())
             .ToList();
     }
 
@@ -51,17 +53,18 @@ public class MangadexApi : IFetcher
         return await response.Content.TryToReadJsonAsync<MangaDexDto>();
     }
 
-    private void ProcessApiResult(ChapterQueueMessageDto request, List<MangaDexResponse> apiData)
+    private void ProcessApiResult(ChapterQueueMessageDto request, List<MangaDexResponse> apiData,
+        decimal lastChapterDecimal)
     {
         var response = apiData
+            .Where(c => c.Attributes.Chapter.GetNumericPart() > lastChapterDecimal)
             .Select(c => new
             {
                 c.Id,
-                ChapterNumber = decimal.Parse(c.Attributes.Chapter, CultureInfo.InvariantCulture),
+                ChapterNumber = c.Attributes.Chapter,
                 c.Attributes.CreatedAt
-            })
-            .Where(x => x.ChapterNumber > request.LastChapterNumber);
-        
+            });
+
         foreach (var chapter in response)
         {
             _chapterList.Add(new ChapterResult(

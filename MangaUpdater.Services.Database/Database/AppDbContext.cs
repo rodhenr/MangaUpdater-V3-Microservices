@@ -20,7 +20,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Source { Id = 1, Name = "MangaDex", BaseUrl = "https://api.mangadex.org/manga/" },
             new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asuracomic.net/series/" },
             new Source { Id = 3, Name = "VortexScans", BaseUrl = "https://vortexscans.org/api/chapters?postId=" },
-            new Source { Id = 4, Name = "Batoto", BaseUrl = "https://xbato.com/title/" }
+            new Source { Id = 4, Name = "Batoto", BaseUrl = "https://xbato.com/title/" },
+            new Source { Id = 5, Name = "SnowMachine", BaseUrl = "https://www.snowmtl.ru/comics/" }
         );
 
         builder.Entity<Manga>().HasData(
@@ -42,7 +43,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Manga { Id = 16, MyAnimeListId = 90125, AniListId = 86635, TitleRomaji = "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen", TitleEnglish = "Kaguya-sama: Love Is War", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx86635-EdaLQmsn86Fy.png" },
             new Manga { Id = 17, MyAnimeListId = 148458, AniListId = 151457, TitleRomaji = "Newbie-ga Neomu Gangham", TitleEnglish = "The Overpowered Newbie", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx151457-7v5jKk5yAnAc.png" },
             new Manga { Id = 18, MyAnimeListId = 130331, AniListId = 122063, TitleRomaji = "Shangri-La Frontier: Kusoge Hunter, Kamige ni Idoman to su", TitleEnglish = "Shangri-La Frontier", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx122063-zq7rF3cdgxpX.jpg" },
-            new Manga { Id = 19, MyAnimeListId = 13, AniListId = 30013, TitleRomaji = "One Piece", TitleEnglish = "One Piece", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-ulXvn0lzWvsz.jpg" }
+            new Manga { Id = 19, MyAnimeListId = 13, AniListId = 30013, TitleRomaji = "One Piece", TitleEnglish = "One Piece", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-ulXvn0lzWvsz.jpg" },
+            new Manga { Id = 20, MyAnimeListId = 147450, AniListId = 139572, TitleRomaji = "Na Honja Necromancer", TitleEnglish = "The Lone Necromancer", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx139572-e3vwLcOVQISn.jpg" },
+            new Manga { Id = 21, MyAnimeListId = 111225, AniListId = 100693, TitleRomaji = "Nozomanu Fushi no Boukensha", TitleEnglish = "The Unwanted Undead Adventurer ", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg" }
         );
         
         builder.Entity<MangaSource>().HasData(
@@ -56,7 +59,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 8, MangaId = 8, SourceId = 2, Url = "the-max-level-hero-has-returned-cc806d84" },
             new MangaSource { Id = 9, MangaId = 9, SourceId = 2, Url = "i-obtained-a-mythic-item-5c23ef60" },
             new MangaSource { Id = 10, MangaId = 10, SourceId = 2, Url = "pick-me-up-infinite-gacha-e764ac18" },
-            new MangaSource { Id = 11, MangaId = 11, SourceId = 2, Url = "the-extra-is-too-strong-ac4babd7" },
+            new MangaSource { Id = 11, MangaId = 11, SourceId = 5, Url = "the-extra-is-too-powerful" },
             new MangaSource { Id = 12, MangaId = 12, SourceId = 2, Url = "absolute-necromancer-f3d79560" },
             new MangaSource { Id = 13, MangaId = 13, SourceId = 2, Url = "player-who-cant-level-up-6937decb" },
             new MangaSource { Id = 14, MangaId = 14, SourceId = 2, Url = "solo-max-level-newbie-6fb35ee2" },
@@ -64,7 +67,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 16, MangaId = 16, SourceId = 1, Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" },
             new MangaSource { Id = 17, MangaId = 17, SourceId = 3, Url = "214" },
             new MangaSource { Id = 18, MangaId = 18, SourceId = 4, Url = "81512-shangri-la-frontier-official" },
-            new MangaSource { Id = 19, MangaId = 19, SourceId = 4, Url = "83510-one-piece-official" }
+            new MangaSource { Id = 19, MangaId = 19, SourceId = 4, Url = "83510-one-piece-official" },
+            new MangaSource { Id = 20, MangaId = 20, SourceId = 5, Url = "the-lone-necromancer" },
+            new MangaSource { Id = 21, MangaId = 21, SourceId = 1, Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e" }
         );
     }
 }

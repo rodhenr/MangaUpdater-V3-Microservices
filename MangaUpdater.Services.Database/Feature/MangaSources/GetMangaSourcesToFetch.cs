@@ -24,7 +24,7 @@ public class GetMangaSourcesToFetchHandler : IRequestHandler<GetMangaSourcesToFe
                 $"{x.Source.BaseUrl}{x.Url}",
                 x.MangaId,
                 (SourcesEnum)x.SourceId,
-                x.Manga.Chapters.Any() ? x.Manga.Chapters.Max(c => c.Number) : 0
+                x.Manga.Chapters.Any() ? x.Manga.Chapters.OrderByDescending(c => c.Date).First().Number : "0"
             ))
             .ToListAsync(cancellationToken);
     }

@@ -3,6 +3,7 @@ using System;
 using MangaUpdater.Services.Database.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MangaUpdater.Services.Database.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250118151455_add-snowMachine-source")]
+    partial class addsnowMachinesource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,18 +39,15 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.Property<int>("MangaId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                    b.Property<decimal>("Number")
+                        .HasColumnType("numeric");
 
                     b.Property<int>("SourceId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Url")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -293,24 +293,6 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MyAnimeListId = 13,
                             TitleEnglish = "One Piece",
                             TitleRomaji = "One Piece"
-                        },
-                        new
-                        {
-                            Id = 20,
-                            AniListId = 139572,
-                            CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx139572-e3vwLcOVQISn.jpg",
-                            MyAnimeListId = 147450,
-                            TitleEnglish = "The Lone Necromancer",
-                            TitleRomaji = "Na Honja Necromancer"
-                        },
-                        new
-                        {
-                            Id = 21,
-                            AniListId = 100693,
-                            CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg",
-                            MyAnimeListId = 111225,
-                            TitleEnglish = "The Unwanted Undead Adventurer ",
-                            TitleRomaji = "Nozomanu Fushi no Boukensha"
                         });
                 });
 
@@ -472,20 +454,6 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 4,
                             Id = 19,
                             Url = "83510-one-piece-official"
-                        },
-                        new
-                        {
-                            MangaId = 20,
-                            SourceId = 5,
-                            Id = 20,
-                            Url = "the-lone-necromancer"
-                        },
-                        new
-                        {
-                            MangaId = 21,
-                            SourceId = 1,
-                            Id = 21,
-                            Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e"
                         });
                 });
 

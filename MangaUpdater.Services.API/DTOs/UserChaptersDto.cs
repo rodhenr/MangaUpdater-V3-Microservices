@@ -7,7 +7,7 @@ public record UserChaptersDto(
     string? UrlAnilist, 
     string TitleRomaji, 
     string TitleEnglish, 
-    decimal? SourceLastChapterNumber, 
+    string? SourceLastChapterNumber, 
     DateTime? SourceLastChapterDate,
     decimal UserLastChapterNumber,
     string CoverUrl

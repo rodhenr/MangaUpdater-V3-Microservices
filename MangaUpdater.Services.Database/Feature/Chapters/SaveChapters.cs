@@ -26,7 +26,7 @@ public class SaveChapters : ISaveChapters
                 MangaId = x.MangaId,
                 SourceId = x.SourceId,
                 Date = x.Date,
-                Number = Convert.ToDecimal(x.Number),
+                Number = x.Number,
                 Url = x.Url
             })
             .ToList();

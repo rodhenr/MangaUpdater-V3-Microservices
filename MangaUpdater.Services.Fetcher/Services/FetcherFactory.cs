@@ -23,6 +23,7 @@ public class FetcherFactory
             SourcesEnum.AsuraScans => _serviceProvider.GetRequiredService<AsuraScansScrapper>(),
             SourcesEnum.VortexScans => _serviceProvider.GetRequiredService<VortexScansApi>(),
             SourcesEnum.Batoto => _serviceProvider.GetRequiredService<BatotoScrapper>(),
+            SourcesEnum.SnowMachine => _serviceProvider.GetRequiredService<SnowMachineScrapper>(),
             _ => throw new Exception("No valid source found.")
         };
     }

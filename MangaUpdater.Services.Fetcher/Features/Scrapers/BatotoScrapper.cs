@@ -1,10 +1,12 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using MangaUpdater.Services.Fetcher.Extensions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Enums;
+using MangaUpdater.Shared.Extensions;
 using MangaUpdater.Shared.Interfaces;
 
 namespace MangaUpdater.Services.Fetcher.Features.Scrapers;
@@ -24,6 +26,8 @@ public partial class BatotoScrapper : IFetcher
     {
         try
         {
+            var lastChapterDecimal = request.LastChapterNumber.GetNumericPart();
+            
             var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
 
             var htmlDoc = new HtmlDocument();
@@ -48,9 +52,9 @@ public partial class BatotoScrapper : IFetcher
             }
             
             return chapterList
-                .GroupBy(x => decimal.Parse(x.Number, CultureInfo.InvariantCulture))
-                .Where(chapter => chapter.Key > request.LastChapterNumber)
-                .Select(x => x.OrderBy(y => y.Date).First())
+                .GroupBy(x => x.Number)
+                .Where(chapter => chapter.Key.GetNumericPart() > lastChapterDecimal)
+                .Select(x => x.OrderBy(y => y.Number.GetNumericPart()).First())
                 .ToList();
         }
         catch (Exception e)
@@ -62,10 +66,10 @@ public partial class BatotoScrapper : IFetcher
     
     static string ExtractChapterNumber(string chapterText)
     {
-        var match = MyRegex().Match(chapterText);
+        var match = BatotoChapterRegex().Match(chapterText);
         return match.Success ? match.Groups[1].Value : string.Empty;
     }
 
     [GeneratedRegex(@"(?:Volume\s\d+\s)?Chapter\s(\d+(\.\d+)?)", RegexOptions.IgnoreCase, "pt-BR")]
-    private static partial Regex MyRegex();
+    private static partial Regex BatotoChapterRegex();
 }

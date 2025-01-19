@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MangaUpdater.Services.Database.Entities;
@@ -8,10 +9,12 @@ public class Chapter : BaseEntity
 
     public int SourceId { get; set; }
 
-    public decimal Number { get; set; }
+    [MaxLength(10)]
+    public required string Number { get; set; }
 
     public DateTime Date { get; set; }
     
+    [MaxLength(100)]
     public required string Url { get; set; }
     
     [ForeignKey("MangaId")]

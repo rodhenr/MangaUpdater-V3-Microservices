@@ -2,9 +2,11 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using MangaUpdater.Services.Fetcher.Extensions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
+using MangaUpdater.Shared.Extensions;
 using MangaUpdater.Shared.Interfaces;
 
 namespace MangaUpdater.Services.Fetcher.Features.Scrapers;
@@ -25,6 +27,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
     {
         try
         {
+            var lastChapterDecimal = request.LastChapterNumber.GetNumericPart();
             var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
 
             var htmlDoc = new HtmlDocument();
@@ -50,7 +53,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
 
             return chaptersFinal?.Chapters
                 .GroupBy(chapter => chapter.Number)
-                .Where(chapter => chapter.Key > request.LastChapterNumber)
+                .Where(chapter => chapter.Key > lastChapterDecimal)
                 .Select(group =>
                 {
                     var chapter = group.OrderBy(x => x.PublishedAt).First();

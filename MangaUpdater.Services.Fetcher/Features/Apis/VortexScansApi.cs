@@ -3,6 +3,7 @@ using MangaUpdater.Services.Fetcher.Extensions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
+using MangaUpdater.Shared.Extensions;
 
 namespace MangaUpdater.Services.Fetcher.Features.Apis;
 
@@ -19,6 +20,7 @@ public class VortexScansApi : IFetcher
     
     public async Task<List<ChapterResult>> GetChaptersAsync(ChapterQueueMessageDto request, CancellationToken cancellationToken = default)
     {
+        var lastChapterDecimal = request.LastChapterNumber.GetNumericPart();
         var offset = 0;
 
         while (true)
@@ -27,13 +29,13 @@ public class VortexScansApi : IFetcher
 
             if (result is null || result.Post.Chapters.Count == 0) break;
 
-            ProcessApiResult(request, result.Post.Chapters);
+            ProcessApiResult(request, result.Post.Chapters, lastChapterDecimal);
             offset += TakeParam;
         }
 
         return _chapterList
             .GroupBy(x => decimal.Parse(x.Number, CultureInfo.InvariantCulture))
-            .Select(x => x.OrderBy(y => y.Date).First())
+            .Select(x => x.OrderBy(y => y.Number.GetNumericPart()).First())
             .ToList();
     }
     
@@ -50,7 +52,7 @@ public class VortexScansApi : IFetcher
         return await response.Content.TryToReadJsonAsync<VortexScansDto>();
     }
     
-    private void ProcessApiResult(ChapterQueueMessageDto request, List<VortexScansChapter> apiData)
+    private void ProcessApiResult(ChapterQueueMessageDto request, List<VortexScansChapter> apiData, decimal lastChapterDecimal)
     {
         var response = apiData
             .Select(c => new
@@ -58,7 +60,7 @@ public class VortexScansApi : IFetcher
                 ChapterNumber = c.Number,
                 c.CreatedAt
             })
-            .Where(x => x.ChapterNumber > request.LastChapterNumber);
+            .Where(x => x.ChapterNumber > lastChapterDecimal);
         
         foreach (var chapter in response)
         {
