@@ -1,5 +1,6 @@
 using System.Text.Json;
 using MangaUpdater.Shared.DTOs;
+using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 
 namespace MangaUpdater.Services.Fetcher.Services;
@@ -20,41 +21,52 @@ public class GetChaptersBackgroundService : BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _rabbitMqClient.ConsumeAsync("get-chapters", async message =>
+        try
         {
-            try
+            var tasks = Enum.GetValues<SourcesEnum>().Select(async source =>
             {
-                var mangaInfo = JsonSerializer.Deserialize<ChapterQueueMessageDto>(message);
-
-                if (mangaInfo is null)
+                await _rabbitMqClient.ConsumeAsync($"get-chapters-{source.ToString()}", async message =>
                 {
-                    _appLogger.LogError("Fetcher", "Failed to deserialize the message.");
-                    return;
-                }
-                
-                _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga ID {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+                    try
+                    {
+                        var mangaInfo = JsonSerializer.Deserialize<ChapterQueueMessageDto>(message);
 
-                using var scope = _serviceProvider.CreateScope();
-                var service = scope.ServiceProvider.GetRequiredService<FetcherFactory>();
-                var fetcher = service.GetChapterFetcher(mangaInfo.Source);
-                
-                var data = await fetcher.GetChaptersAsync(mangaInfo, stoppingToken);
-                
-                if (data.Count == 0)
-                {
-                    _appLogger.LogInformation("Fetcher", $"No chapters to save.");
-                    return;
-                }
+                        if (mangaInfo is null)
+                        {
+                            _appLogger.LogError("Fetcher", "Failed to deserialize the message.");
+                            return;
+                        }
 
-                await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), 
-                    stoppingToken);
-                
-                _appLogger.LogInformation("Fetcher", $"Queued for processing: {data.Count} chapters for Manga ID = {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
-            }
-            catch (Exception ex)
-            {
-                _appLogger.LogError("Fetcher", "Error processing message.", ex);
-            }
-        }, stoppingToken);
+                        _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga ID {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+
+                        using var scope = _serviceProvider.CreateScope();
+                        var service = scope.ServiceProvider.GetRequiredService<FetcherFactory>();
+                        var fetcher = service.GetChapterFetcher(mangaInfo.Source);
+
+                        var data = await fetcher.GetChaptersAsync(mangaInfo, stoppingToken);
+
+                        if (data.Count == 0)
+                        {
+                            _appLogger.LogInformation("Fetcher", $"No chapters to save.");
+                            return;
+                        }
+
+                        await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), stoppingToken);
+
+                        _appLogger.LogInformation("Fetcher", $"Queued for processing: {data.Count} chapters for Manga ID = {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+                    }
+                    catch (Exception ex)
+                    {
+                        _appLogger.LogError("Fetcher", "Error processing message.", ex);
+                    }
+                }, stoppingToken);
+            });
+
+            await Task.WhenAll(tasks);
+        }
+        catch (Exception ex)
+        {
+            _appLogger.LogError("Fetcher", "Error setting up consumers for chapter queues.", ex);
+        }
     }
 }
