@@ -10,5 +10,9 @@ public record UserChaptersDto(
     string? SourceLastChapterNumber, 
     DateTime? SourceLastChapterDate,
     decimal UserLastChapterNumber,
-    string CoverUrl
+    string CoverUrl,
+    string Status,
+    int Score,
+    List<string> Genres,
+    string CountryOfOrigin
 );

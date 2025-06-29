@@ -11,6 +11,8 @@ public class Source : BaseEntity
     [StringLength(200)]
     public required string BaseUrl { get; set; }
     
+    public DateTime Timestamp { get; set; }
+    
     [InverseProperty("Source")]
     public virtual ICollection<Chapter> Chapters { get; set; } = new List<Chapter>();
     

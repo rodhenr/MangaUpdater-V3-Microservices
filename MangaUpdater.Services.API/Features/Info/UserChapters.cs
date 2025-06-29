@@ -48,7 +48,11 @@ public class UserChaptersHandler : IRequestHandler<UserChaptersQuery, List<UserC
                 lastChapter?.Number,
                 lastChapter?.Date,
                 manga.UserLastChapterRead,
-                manga.CoverImage
+                manga.CoverImage,
+                manga.Status,
+                manga.AverageScore,
+                manga.Genres,
+                manga.CountryOfOrigin
             );
             
             response.Add(info);

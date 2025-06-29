@@ -57,7 +57,7 @@ public partial class MangadexApi : IFetcher
         decimal lastChapterDecimal)
     {
         var response = apiData
-            .Where(c => c.Attributes.Chapter.GetNumericPart() > lastChapterDecimal)
+            .Where(c => !string.IsNullOrEmpty(c.Attributes.Chapter) && c.Attributes.Chapter.GetNumericPart() > lastChapterDecimal)
             .Select(c => new
             {
                 c.Id,

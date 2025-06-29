@@ -15,9 +15,9 @@ public class MangaController : BaseController
     }
     
     [HttpGet]
-    public async Task<List<MangaDto>> GetMangas()
+    public async Task<PagedResultDto<MangaDto>> GetMangas(int pageNumber, int pageSize)
     {
-        return await _sender.Send(new GetMangasQuery());
+        return await _sender.Send(new GetMangasQuery(pageNumber, pageSize));
     }
 
     [HttpGet("full")]
@@ -36,5 +36,11 @@ public class MangaController : BaseController
     public async Task CreateManga([FromBody] CreateMangaRequest request)
     {
         await _sender.Send(new CreateMangaCommand(request));
+    }
+
+    [HttpPut("{mangaId:int}")]
+    public async Task UpdateManga(int mangaId, [FromBody] UpdateMangaRequest request)
+    {
+        await _sender.Send(new UpdateMangaCommand(mangaId, request));
     }
 }

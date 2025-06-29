@@ -1,4 +1,5 @@
 using MangaUpdater.Services.Database;
+using MangaUpdater.Shared.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,5 +28,8 @@ app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+
+// Middlewares
+app.UseMiddleware<HttpExceptionMiddleware>();
 
 app.Run();

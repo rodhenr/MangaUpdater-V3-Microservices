@@ -29,6 +29,9 @@ public class Media
     public string SiteUrl { get; set; }
     public CoverImage CoverImage { get; set; }
     public Title Title { get; set; }
+    public string Status { get; set; }
+    public List<string> Genres { get; set; }
+    public int AverageScore { get; set; }
 }
 
 public class CoverImage

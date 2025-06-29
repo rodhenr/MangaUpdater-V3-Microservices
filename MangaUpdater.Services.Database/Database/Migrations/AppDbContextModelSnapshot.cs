@@ -36,13 +36,29 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.Property<int>("MangaId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Number")
+                    b.Property<int>("NumberMajor")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("NumberMinor")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("NumberSuffix")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("character varying(5)");
+
+                    b.Property<string>("OriginalNumber")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)");
 
                     b.Property<int>("SourceId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -53,7 +69,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
                     b.HasIndex("SourceId");
 
-                    b.HasIndex("MangaId", "SourceId", "Number")
+                    b.HasIndex("MangaId", "SourceId", "OriginalNumber")
                         .IsUnique();
 
                     b.ToTable("Chapters");
@@ -108,6 +124,11 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.Property<int>("MyAnimeListId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
                     b.Property<string>("TitleEnglish")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -120,6 +141,12 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AniListId")
+                        .IsUnique();
+
+                    b.HasIndex("MyAnimeListId")
+                        .IsUnique();
+
                     b.ToTable("Mangas");
 
                     b.HasData(
@@ -129,6 +156,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 109957,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx109957-EgJWdR7l9TBG.jpg",
                             MyAnimeListId = 147324,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Second Life Ranker",
                             TitleRomaji = "Dubeon Saneun Ranker"
                         },
@@ -138,6 +166,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 121753,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx121753-vhvIdfxdaEdF.jpg",
                             MyAnimeListId = 127781,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "As a Reincarnated Aristocrat, I’ll Use My Appraisal Skill to Rise in the World",
                             TitleRomaji = "Tensei Kizoku, Kantei Skill de Nariagaru: Jakushou Ryouchi wo Uketsuida node, Yuushuu na Jinzai wo Fuyashiteitara, Saikyou Ryouchi ni Natteta"
                         },
@@ -147,6 +176,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 114048,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx114048-4HEtdYDcXI8r.jpg",
                             MyAnimeListId = 123456,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Ossan Newbie Adventurer, Trained to Death by the Most Powerful Party, Became Invincible",
                             TitleRomaji = "Shinmai Ossan Bouken-sha, Saikyou Party ni Shinu Hodo Kitaerarete Muteki ni Naru."
                         },
@@ -156,6 +186,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 101715,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx101715-4yYFDOadUtnC.jpg",
                             MyAnimeListId = 111466,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Saving 80,000 Gold in Another World for my Retirement",
                             TitleRomaji = "Rougo ni Sonaete Isekai de 8-manmai no Kinka wo Tamemasu"
                         },
@@ -165,6 +196,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 163824,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx163824-KiablxybJD6i.jpg",
                             MyAnimeListId = 157888,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Revenge of the Baskerville Bloodhound",
                             TitleRomaji = "Cheolhyeolgeomga Sanyanggaeui Hoegwi"
                         },
@@ -174,6 +206,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 149332,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx149332-adkSyOFY3c5U.jpg",
                             MyAnimeListId = 146949,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Swordmaster's Son",
                             TitleRomaji = "Geomsul Myeongga Mangnaeadeul"
                         },
@@ -183,6 +216,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 153883,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx153883-thHiGEnqxFoB.jpg",
                             MyAnimeListId = 151483,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The SSS-Ranker Returns",
                             TitleRomaji = "SSS-geup Ranker Hoegwihada"
                         },
@@ -192,6 +226,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 125636,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx125636-g0gkyLZbo3Tz.png",
                             MyAnimeListId = 147322,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Max Level Hero Strikes Back!",
                             TitleRomaji = "Man-Level Yeongung-nim-kkeseo Gwihwan Hasinda!"
                         },
@@ -201,6 +236,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 151025,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx151025-j7nZBNb46cv9.jpg",
                             MyAnimeListId = 150561,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Mythic Item Obtained",
                             TitleRomaji = "Sinhwa-geup Gwisok Item-eul Son-e Neoeotda"
                         },
@@ -210,6 +246,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 159441,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx159441-n919hUzb0j44.jpg",
                             MyAnimeListId = 154587,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Pick Me Up",
                             TitleRomaji = "Pick Me Up!, Infinite Gacha"
                         },
@@ -219,6 +256,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 167318,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx167318-fmcRXTsFE99i.jpg",
                             MyAnimeListId = 159916,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Extra Is Too Powerful",
                             TitleRomaji = "Extra-ga Neomu Gangham"
                         },
@@ -228,6 +266,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 166635,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx166635-6Y7R6AZe52Fv.jpg",
                             MyAnimeListId = 160118,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "All-Master Necromancer",
                             TitleRomaji = "Absolute Necromancer"
                         },
@@ -237,6 +276,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 130511,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx130511-4O6dF8oaiVJh.jpg",
                             MyAnimeListId = 147995,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Player Who Can't Level Up",
                             TitleRomaji = "Level Up Mothaneun Player"
                         },
@@ -246,6 +286,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 137280,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx137280-C8kbBitLxlwR.png",
                             MyAnimeListId = 147392,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "I'm the Max-Level Newbie",
                             TitleRomaji = "Na Honja Man-Level Newbie"
                         },
@@ -255,6 +296,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 110989,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx110989-DKLKwQ5ojqXD.jpg",
                             MyAnimeListId = 122650,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Failure Frame: I Became the Strongest and Annihilated Everything With Low-Level Spells",
                             TitleRomaji = "Hazurewaku no \"Joutai Ijou Skill\" de Saikyou ni Natta Ore ga Subete wo Juurin suru made"
                         },
@@ -264,6 +306,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 86635,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx86635-EdaLQmsn86Fy.png",
                             MyAnimeListId = 90125,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Kaguya-sama: Love Is War",
                             TitleRomaji = "Kaguya-sama wa Kokurasetai: Tensai-tachi no Renai Zunousen"
                         },
@@ -273,6 +316,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 151457,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx151457-7v5jKk5yAnAc.png",
                             MyAnimeListId = 148458,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Overpowered Newbie",
                             TitleRomaji = "Newbie-ga Neomu Gangham"
                         },
@@ -282,6 +326,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 122063,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx122063-zq7rF3cdgxpX.jpg",
                             MyAnimeListId = 130331,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "Shangri-La Frontier",
                             TitleRomaji = "Shangri-La Frontier: Kusoge Hunter, Kamige ni Idoman to su"
                         },
@@ -291,6 +336,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 30013,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-ulXvn0lzWvsz.jpg",
                             MyAnimeListId = 13,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "One Piece",
                             TitleRomaji = "One Piece"
                         },
@@ -300,6 +346,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 139572,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx139572-e3vwLcOVQISn.jpg",
                             MyAnimeListId = 147450,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Lone Necromancer",
                             TitleRomaji = "Na Honja Necromancer"
                         },
@@ -309,6 +356,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             AniListId = 100693,
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg",
                             MyAnimeListId = 111225,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             TitleEnglish = "The Unwanted Undead Adventurer ",
                             TitleRomaji = "Nozomanu Fushi no Boukensha"
                         });
@@ -328,6 +376,11 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
                     b.Property<string>("Url")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -345,6 +398,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 1,
                             SourceId = 1,
                             Id = 1,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "1ffca916-3ad7-46d2-9591-a9b39e639971"
                         },
                         new
@@ -352,6 +406,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 2,
                             SourceId = 1,
                             Id = 2,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "fef2e4da-36f9-48e9-8317-2516f4b6ab14"
                         },
                         new
@@ -359,6 +414,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 3,
                             SourceId = 1,
                             Id = 3,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "a2320293-f00e-43a0-8d08-1110cf26a894"
                         },
                         new
@@ -366,6 +422,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 4,
                             SourceId = 1,
                             Id = 4,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e"
                         },
                         new
@@ -373,6 +430,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 5,
                             SourceId = 2,
                             Id = 5,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "revenge-of-the-iron-blooded-sword-hound-da0c5e71"
                         },
                         new
@@ -380,6 +438,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 6,
                             SourceId = 2,
                             Id = 6,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "swordmasters-youngest-son-e6946e27"
                         },
                         new
@@ -387,6 +446,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 7,
                             SourceId = 2,
                             Id = 7,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "return-of-the-sss-class-ranker-f6fde482"
                         },
                         new
@@ -394,6 +454,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 8,
                             SourceId = 2,
                             Id = 8,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "the-max-level-hero-has-returned-cc806d84"
                         },
                         new
@@ -401,6 +462,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 9,
                             SourceId = 2,
                             Id = 9,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "i-obtained-a-mythic-item-5c23ef60"
                         },
                         new
@@ -408,6 +470,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 10,
                             SourceId = 2,
                             Id = 10,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "pick-me-up-infinite-gacha-e764ac18"
                         },
                         new
@@ -415,6 +478,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 11,
                             SourceId = 5,
                             Id = 11,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "the-extra-is-too-powerful"
                         },
                         new
@@ -422,6 +486,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 12,
                             SourceId = 2,
                             Id = 12,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "absolute-necromancer-f3d79560"
                         },
                         new
@@ -429,6 +494,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 13,
                             SourceId = 2,
                             Id = 13,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "player-who-cant-level-up-6937decb"
                         },
                         new
@@ -436,6 +502,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 14,
                             SourceId = 2,
                             Id = 14,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "solo-max-level-newbie-6fb35ee2"
                         },
                         new
@@ -443,6 +510,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 15,
                             SourceId = 1,
                             Id = 15,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "0b171f64-89a5-4c37-b5f9-75cca57e8787"
                         },
                         new
@@ -450,6 +518,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 16,
                             SourceId = 1,
                             Id = 16,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9"
                         },
                         new
@@ -457,6 +526,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 17,
                             SourceId = 3,
                             Id = 17,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "214"
                         },
                         new
@@ -464,6 +534,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 18,
                             SourceId = 4,
                             Id = 18,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "81512-shangri-la-frontier-official"
                         },
                         new
@@ -471,6 +542,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 19,
                             SourceId = 4,
                             Id = 19,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "83510-one-piece-official"
                         },
                         new
@@ -478,6 +550,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 20,
                             SourceId = 5,
                             Id = 20,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "the-lone-necromancer"
                         },
                         new
@@ -485,6 +558,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             MangaId = 21,
                             SourceId = 1,
                             Id = 21,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e"
                         });
                 });
@@ -507,6 +581,11 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
                     b.HasKey("Id");
 
                     b.ToTable("Sources");
@@ -516,31 +595,36 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         {
                             Id = 1,
                             BaseUrl = "https://api.mangadex.org/manga/",
-                            Name = "MangaDex"
+                            Name = "MangaDex",
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2,
                             BaseUrl = "https://asuracomic.net/series/",
-                            Name = "AsuraScans"
+                            Name = "AsuraScans",
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 3,
                             BaseUrl = "https://vortexscans.org/api/chapters?postId=",
-                            Name = "VortexScans"
+                            Name = "VortexScans",
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 4,
                             BaseUrl = "https://xbato.com/title/",
-                            Name = "Batoto"
+                            Name = "Batoto",
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 5,
                             BaseUrl = "https://www.snowmtl.ru/comics/",
-                            Name = "SnowMachine"
+                            Name = "SnowMachine",
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 

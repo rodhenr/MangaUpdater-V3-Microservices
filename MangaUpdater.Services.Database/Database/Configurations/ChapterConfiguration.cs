@@ -13,7 +13,7 @@ public class ChapterConfiguration : IEntityTypeConfiguration<Chapter>
             .ValueGeneratedOnAdd();
         
         builder
-            .HasIndex(ch => new { ch.MangaId, ch.SourceId, ch.Number })
+            .HasIndex(ch => new { ch.MangaId, ch.SourceId, ch.OriginalNumber })
             .IsUnique();
 
         builder.HasOne(ch => ch.Manga)
@@ -23,5 +23,9 @@ public class ChapterConfiguration : IEntityTypeConfiguration<Chapter>
         builder.HasOne(ch => ch.Source)
             .WithMany(ch => ch.Chapters)
             .HasForeignKey(ch => ch.SourceId);
+        
+        builder
+            .Property(m => m.Timestamp)
+            .HasDefaultValueSql("timezone('utc', now())");
     }
 }

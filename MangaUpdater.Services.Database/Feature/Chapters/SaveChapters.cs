@@ -1,5 +1,6 @@
 using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Entities;
+using MangaUpdater.Services.Database.Helpers;
 using MangaUpdater.Shared.DTOs;
 
 namespace MangaUpdater.Services.Database.Feature.Chapters;
@@ -21,13 +22,21 @@ public class SaveChapters : ISaveChapters
     public async Task SaveChaptersAsync(List<FetcherChapterResultDto> data, CancellationToken ct)
     {
         var chapters = data
-            .Select(x => new Chapter
+            .Select(x =>
             {
-                MangaId = x.MangaId,
-                SourceId = x.SourceId,
-                Date = x.Date,
-                Number = x.Number,
-                Url = x.Url
+                var (major, minor, suffix) = ChapterNumberParser.Parse(x.Number);
+
+                return new Chapter
+                {
+                    MangaId = x.MangaId,
+                    SourceId = x.SourceId,
+                    Date = x.Date,
+                    OriginalNumber = x.Number,
+                    Url = x.Url,
+                    NumberMajor = major,
+                    NumberMinor = minor,
+                    NumberSuffix = suffix
+                };
             })
             .ToList();
         

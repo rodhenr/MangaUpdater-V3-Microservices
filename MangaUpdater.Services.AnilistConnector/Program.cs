@@ -1,3 +1,5 @@
+using MangaUpdater.Shared.Middlewares;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Built-in
@@ -19,5 +21,8 @@ if (app.Environment.IsDevelopment())
 // Built-in
 app.UseHttpsRedirection();
 app.MapControllers();
+
+// Middlewares
+app.UseMiddleware<HttpExceptionMiddleware>();
 
 app.Run();

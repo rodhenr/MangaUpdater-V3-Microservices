@@ -26,7 +26,7 @@ public class GetMangaChaptersHandler : IRequestHandler<GetMangaChaptersQuery, Ma
                 x.AniListId,
                 x.TitleRomaji,
                 x.TitleEnglish,
-                x.Chapters.Select(y => new ChaptersDto(y.SourceId, y.Number, y.Date, y.Url)).ToList()
+                x.Chapters.Select(y => new ChaptersDto(y.SourceId, y.OriginalNumber, y.Date, y.Url)).ToList()
             ))
             .FirstOrDefaultAsync(cancellationToken);
     }

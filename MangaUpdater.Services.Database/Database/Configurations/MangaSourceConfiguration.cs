@@ -27,5 +27,9 @@ public class MangaSourceConfiguration : IEntityTypeConfiguration<MangaSource>
         builder
             .Property(ms => ms.Url)
             .HasMaxLength(100);
+        
+        builder
+            .Property(m => m.Timestamp)
+            .HasDefaultValueSql("timezone('utc', now())");
     }
 }

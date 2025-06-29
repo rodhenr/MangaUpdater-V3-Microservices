@@ -10,12 +10,21 @@ public class Chapter : BaseEntity
     public int SourceId { get; set; }
 
     [MaxLength(10)]
-    public required string Number { get; set; }
+    public required string OriginalNumber { get; set; }
+    
+    public int NumberMajor { get; set; }
+    
+    public int NumberMinor { get; set; }
+    
+    [MaxLength(5)]
+    public string NumberSuffix { get; set; } = string.Empty;
 
     public DateTime Date { get; set; }
     
     [MaxLength(100)]
     public required string Url { get; set; }
+
+    public DateTime Timestamp { get; set; }
     
     [ForeignKey("MangaId")]
     [InverseProperty("Chapters")]

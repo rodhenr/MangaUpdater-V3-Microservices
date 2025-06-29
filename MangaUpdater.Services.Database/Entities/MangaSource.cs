@@ -11,6 +11,8 @@ public class MangaSource : BaseEntity
     
     [StringLength(100)]
     public required string Url { get; set; }
+
+    public DateTime Timestamp { get; set; }
     
     [ForeignKey("MangaId")]
     [InverseProperty("MangaSources")]

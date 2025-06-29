@@ -19,5 +19,9 @@ public class SourceConfiguration : IEntityTypeConfiguration<Source>
         builder
             .Property(s => s.BaseUrl)
             .HasMaxLength(100);
+        
+        builder
+            .Property(m => m.Timestamp)
+            .HasDefaultValueSql("timezone('utc', now())");
     }
 }

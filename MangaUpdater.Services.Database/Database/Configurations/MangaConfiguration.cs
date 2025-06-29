@@ -19,5 +19,17 @@ public class MangaConfiguration : IEntityTypeConfiguration<Manga>
         builder
             .Property(m => m.TitleRomaji)
             .HasMaxLength(200);
+        
+        builder
+            .Property(m => m.Timestamp)
+            .HasDefaultValueSql("timezone('utc', now())");
+        
+        builder
+            .HasIndex(m => m.MyAnimeListId)
+            .IsUnique();
+
+        builder
+            .HasIndex(m => m.AniListId)
+            .IsUnique();
     }
 }
