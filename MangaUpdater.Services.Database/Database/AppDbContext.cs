@@ -21,7 +21,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asuracomic.net/series/" },
             new Source { Id = 3, Name = "VortexScans", BaseUrl = "https://vortexscans.org/api/chapters?postId=" },
             new Source { Id = 4, Name = "Batoto", BaseUrl = "https://xbato.com/title/" },
-            new Source { Id = 5, Name = "SnowMachine", BaseUrl = "https://www.snowmtl.ru/comics/" }
+            new Source { Id = 5, Name = "SnowMachine", BaseUrl = "https://www.snowmtl.ru/comics/" },
+            new Source { Id = 6, Name = "Comick", BaseUrl = "https://api.comick.fun/comic/" }
         );
 
         builder.Entity<Manga>().HasData(
@@ -45,11 +46,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new Manga { Id = 18, MyAnimeListId = 130331, AniListId = 122063, TitleRomaji = "Shangri-La Frontier: Kusoge Hunter, Kamige ni Idoman to su", TitleEnglish = "Shangri-La Frontier", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx122063-zq7rF3cdgxpX.jpg" },
             new Manga { Id = 19, MyAnimeListId = 13, AniListId = 30013, TitleRomaji = "One Piece", TitleEnglish = "One Piece", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-ulXvn0lzWvsz.jpg" },
             new Manga { Id = 20, MyAnimeListId = 147450, AniListId = 139572, TitleRomaji = "Na Honja Necromancer", TitleEnglish = "The Lone Necromancer", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx139572-e3vwLcOVQISn.jpg" },
-            new Manga { Id = 21, MyAnimeListId = 111225, AniListId = 100693, TitleRomaji = "Nozomanu Fushi no Boukensha", TitleEnglish = "The Unwanted Undead Adventurer ", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg" }
+            new Manga { Id = 21, MyAnimeListId = 111225, AniListId = 100693, TitleRomaji = "Nozomanu Fushi no Boukensha", TitleEnglish = "The Unwanted Undead Adventurer", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg" },
+            new Manga { Id = 22, MyAnimeListId = 150210, AniListId = 153284, TitleRomaji = "Man Nyeon Man-e Gwihwanhan Player", TitleEnglish = "After Ten Millennia in Hell", CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx153284-roAlRmlRM7Vs.png" }
         );
         
         builder.Entity<MangaSource>().HasData(
-            new MangaSource { Id = 1, MangaId = 1, SourceId = 1, Url = "1ffca916-3ad7-46d2-9591-a9b39e639971" },
+            new MangaSource { Id = 1, MangaId = 1, SourceId = 6, Url = "01-second-life-ranker", AditionalInfo = "l_Vjpvkq" },
             new MangaSource { Id = 2, MangaId = 2, SourceId = 1, Url = "fef2e4da-36f9-48e9-8317-2516f4b6ab14" },
             new MangaSource { Id = 3, MangaId = 3, SourceId = 1, Url = "a2320293-f00e-43a0-8d08-1110cf26a894" },
             new MangaSource { Id = 4, MangaId = 4, SourceId = 1, Url = "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e" },
@@ -69,7 +71,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 18, MangaId = 18, SourceId = 4, Url = "81512-shangri-la-frontier-official" },
             new MangaSource { Id = 19, MangaId = 19, SourceId = 4, Url = "83510-one-piece-official" },
             new MangaSource { Id = 20, MangaId = 20, SourceId = 5, Url = "the-lone-necromancer" },
-            new MangaSource { Id = 21, MangaId = 21, SourceId = 1, Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e" }
+            new MangaSource { Id = 21, MangaId = 21, SourceId = 1, Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e" },
+            new MangaSource { Id = 22, MangaId = 22, SourceId = 6, Url = "00-player-who-returned-10-000-years-later", AditionalInfo = "54Zwh6iY" }
         );
     }
 }

@@ -7,6 +7,7 @@ using MangaUpdater.Services.Logging;
 using MangaUpdater.Shared.Interfaces;
 using MangaUpdater.Shared.Models;
 using Microsoft.Extensions.Options;
+using PuppeteerSharp;
 
 namespace MangaUpdater.Services.Fetcher;
 
@@ -20,6 +21,17 @@ public static class DependencyInjectionExtensions
         services.AddTransient<VortexScansApi>();
         services.AddTransient<BatotoScrapper>();
         services.AddTransient<SnowMachineScrapper>();
+        
+        services.AddSingleton<IBrowser>(provider => Puppeteer
+            .LaunchAsync(new LaunchOptions
+            {
+                Headless = true,
+                ExecutablePath = "/usr/bin/google-chrome",
+                Args = ["--no-sandbox", "--disable-dev-shm-usage"]
+            })
+            .GetAwaiter()
+            .GetResult());
+        services.AddTransient<ComickScrapper>();
         
         AddRabbitMqServices(services, configuration);
         AddBackgroundServices(services);

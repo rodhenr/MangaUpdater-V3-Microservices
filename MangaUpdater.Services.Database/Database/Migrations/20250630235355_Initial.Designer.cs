@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MangaUpdater.Services.Database.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250629182847_add-manga-unique-index")]
-    partial class addmangauniqueindex
+    [Migration("20250630235355_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -360,8 +360,18 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg",
                             MyAnimeListId = 111225,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TitleEnglish = "The Unwanted Undead Adventurer ",
+                            TitleEnglish = "The Unwanted Undead Adventurer",
                             TitleRomaji = "Nozomanu Fushi no Boukensha"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            AniListId = 153284,
+                            CoverUrl = "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx153284-roAlRmlRM7Vs.png",
+                            MyAnimeListId = 150210,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TitleEnglish = "After Ten Millennia in Hell",
+                            TitleRomaji = "Man Nyeon Man-e Gwihwanhan Player"
                         });
                 });
 
@@ -372,6 +382,10 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
                     b.Property<int>("SourceId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("AditionalInfo")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -399,10 +413,11 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         new
                         {
                             MangaId = 1,
-                            SourceId = 1,
+                            SourceId = 6,
+                            AditionalInfo = "l_Vjpvkq",
                             Id = 1,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "1ffca916-3ad7-46d2-9591-a9b39e639971"
+                            Url = "01-second-life-ranker"
                         },
                         new
                         {
@@ -563,6 +578,15 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             Id = 21,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e"
+                        },
+                        new
+                        {
+                            MangaId = 22,
+                            SourceId = 6,
+                            AditionalInfo = "54Zwh6iY",
+                            Id = 22,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Url = "00-player-who-returned-10-000-years-later"
                         });
                 });
 
@@ -627,6 +651,13 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             Id = 5,
                             BaseUrl = "https://www.snowmtl.ru/comics/",
                             Name = "SnowMachine",
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            BaseUrl = "https://api.comick.fun/comic/",
+                            Name = "Comick",
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });

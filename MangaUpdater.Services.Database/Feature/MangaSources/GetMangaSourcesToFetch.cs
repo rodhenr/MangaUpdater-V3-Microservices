@@ -21,8 +21,11 @@ public class GetMangaSourcesToFetchHandler : IRequestHandler<GetMangaSourcesToFe
     {
         return await _context.MangaSources
             .Select(x => new ChapterQueueMessageDto(
-                $"{x.Source.BaseUrl}{x.Url}",
+                x.Source.BaseUrl,
+                x.Url,
+                x.AditionalInfo,
                 x.MangaId,
+                x.Manga.TitleEnglish,
                 (SourcesEnum)x.SourceId,
                 x.Manga.Chapters.Any() 
                     ? x.Manga.Chapters.OrderByDescending(c => c.NumberMajor).ThenByDescending(c => c.NumberMinor).ThenByDescending(c => c.NumberSuffix).First().OriginalNumber 

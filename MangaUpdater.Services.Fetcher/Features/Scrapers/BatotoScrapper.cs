@@ -28,7 +28,7 @@ public partial class BatotoScrapper : IFetcher
         {
             var lastChapterDecimal = request.LastChapterNumber.GetNumericPart();
             
-            var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
+            var html = await _httpClient.GetStringAsync($"{request.BaseUrlPart}{request.MangaUrlPart}", cancellationToken);
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
@@ -59,7 +59,7 @@ public partial class BatotoScrapper : IFetcher
         }
         catch (Exception e)
         {
-            _appLogger.LogError("Fetch", $"An error occurred while scraping the manga '{request.MangaId}' from URL '{request.FullUrl}'.", e);
+            _appLogger.LogError("Fetch", $"An error occurred while scraping the manga '{request.MangaName}' from URL '{request.BaseUrlPart}{request.MangaUrlPart}'.", e);
             return [];
         }
     }

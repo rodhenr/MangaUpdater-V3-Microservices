@@ -104,6 +104,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     MangaId = table.Column<int>(type: "integer", nullable: false),
                     SourceId = table.Column<int>(type: "integer", nullable: false),
                     Url = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    AditionalInfo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())"),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
@@ -150,7 +151,8 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     { 18, 122063, "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx122063-zq7rF3cdgxpX.jpg", 130331, "Shangri-La Frontier", "Shangri-La Frontier: Kusoge Hunter, Kamige ni Idoman to su" },
                     { 19, 30013, "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx30013-ulXvn0lzWvsz.jpg", 13, "One Piece", "One Piece" },
                     { 20, 139572, "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx139572-e3vwLcOVQISn.jpg", 147450, "The Lone Necromancer", "Na Honja Necromancer" },
-                    { 21, 100693, "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg", 111225, "The Unwanted Undead Adventurer ", "Nozomanu Fushi no Boukensha" }
+                    { 21, 100693, "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/nx100693-SwgtbDgQosE7.jpg", 111225, "The Unwanted Undead Adventurer", "Nozomanu Fushi no Boukensha" },
+                    { 22, 153284, "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx153284-roAlRmlRM7Vs.png", 150210, "After Ten Millennia in Hell", "Man Nyeon Man-e Gwihwanhan Player" }
                 });
 
             migrationBuilder.InsertData(
@@ -162,35 +164,37 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     { 2, "https://asuracomic.net/series/", "AsuraScans" },
                     { 3, "https://vortexscans.org/api/chapters?postId=", "VortexScans" },
                     { 4, "https://xbato.com/title/", "Batoto" },
-                    { 5, "https://www.snowmtl.ru/comics/", "SnowMachine" }
+                    { 5, "https://www.snowmtl.ru/comics/", "SnowMachine" },
+                    { 6, "https://api.comick.fun/comic/", "Comick" }
                 });
 
             migrationBuilder.InsertData(
                 table: "MangaSources",
-                columns: new[] { "MangaId", "SourceId", "Id", "Url" },
+                columns: new[] { "MangaId", "SourceId", "AditionalInfo", "Id", "Url" },
                 values: new object[,]
                 {
-                    { 1, 1, 1, "1ffca916-3ad7-46d2-9591-a9b39e639971" },
-                    { 2, 1, 2, "fef2e4da-36f9-48e9-8317-2516f4b6ab14" },
-                    { 3, 1, 3, "a2320293-f00e-43a0-8d08-1110cf26a894" },
-                    { 4, 1, 4, "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e" },
-                    { 5, 2, 5, "revenge-of-the-iron-blooded-sword-hound-da0c5e71" },
-                    { 6, 2, 6, "swordmasters-youngest-son-e6946e27" },
-                    { 7, 2, 7, "return-of-the-sss-class-ranker-f6fde482" },
-                    { 8, 2, 8, "the-max-level-hero-has-returned-cc806d84" },
-                    { 9, 2, 9, "i-obtained-a-mythic-item-5c23ef60" },
-                    { 10, 2, 10, "pick-me-up-infinite-gacha-e764ac18" },
-                    { 11, 5, 11, "the-extra-is-too-powerful" },
-                    { 12, 2, 12, "absolute-necromancer-f3d79560" },
-                    { 13, 2, 13, "player-who-cant-level-up-6937decb" },
-                    { 14, 2, 14, "solo-max-level-newbie-6fb35ee2" },
-                    { 15, 1, 15, "0b171f64-89a5-4c37-b5f9-75cca57e8787" },
-                    { 16, 1, 16, "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" },
-                    { 17, 3, 17, "214" },
-                    { 18, 4, 18, "81512-shangri-la-frontier-official" },
-                    { 19, 4, 19, "83510-one-piece-official" },
-                    { 20, 5, 20, "the-lone-necromancer" },
-                    { 21, 1, 21, "6e44705b-9f80-42f6-9ebb-1141fbe8320e" }
+                    { 1, 6, "l_Vjpvkq", 1, "01-second-life-ranker" },
+                    { 2, 1, null, 2, "fef2e4da-36f9-48e9-8317-2516f4b6ab14" },
+                    { 3, 1, null, 3, "a2320293-f00e-43a0-8d08-1110cf26a894" },
+                    { 4, 1, null, 4, "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e" },
+                    { 5, 2, null, 5, "revenge-of-the-iron-blooded-sword-hound-da0c5e71" },
+                    { 6, 2, null, 6, "swordmasters-youngest-son-e6946e27" },
+                    { 7, 2, null, 7, "return-of-the-sss-class-ranker-f6fde482" },
+                    { 8, 2, null, 8, "the-max-level-hero-has-returned-cc806d84" },
+                    { 9, 2, null, 9, "i-obtained-a-mythic-item-5c23ef60" },
+                    { 10, 2, null, 10, "pick-me-up-infinite-gacha-e764ac18" },
+                    { 11, 5, null, 11, "the-extra-is-too-powerful" },
+                    { 12, 2, null, 12, "absolute-necromancer-f3d79560" },
+                    { 13, 2, null, 13, "player-who-cant-level-up-6937decb" },
+                    { 14, 2, null, 14, "solo-max-level-newbie-6fb35ee2" },
+                    { 15, 1, null, 15, "0b171f64-89a5-4c37-b5f9-75cca57e8787" },
+                    { 16, 1, null, 16, "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" },
+                    { 17, 3, null, 17, "214" },
+                    { 18, 4, null, 18, "81512-shangri-la-frontier-official" },
+                    { 19, 4, null, 19, "83510-one-piece-official" },
+                    { 20, 5, null, 20, "the-lone-necromancer" },
+                    { 21, 1, null, 21, "6e44705b-9f80-42f6-9ebb-1141fbe8320e" },
+                    { 22, 6, "54Zwh6iY", 22, "00-player-who-returned-10-000-years-later" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -203,6 +207,18 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                 name: "IX_Chapters_SourceId",
                 table: "Chapters",
                 column: "SourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Mangas_AniListId",
+                table: "Mangas",
+                column: "AniListId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Mangas_MyAnimeListId",
+                table: "Mangas",
+                column: "MyAnimeListId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_MangaSources_SourceId",

@@ -42,12 +42,12 @@ public partial class MangadexApi : IFetcher
 
     private async Task<MangaDexDto?> GetApiResult(ChapterQueueMessageDto request, int offset, CancellationToken cancellationToken)
     {
-        var url = $"{request.FullUrl}/{ApiOptions}{offset}";
+        var url = $"{request.BaseUrlPart}{request.MangaUrlPart}/{ApiOptions}{offset}";
         var response = await _httpClient.GetAsync(url, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Failed to retrieve data for MangaId `{request.MangaId}` from MangaDex");
+            throw new Exception($"Failed to retrieve data for Manga '{request.MangaName}' from MangaDex.");
         }
 
         return await response.Content.TryToReadJsonAsync<MangaDexDto>();

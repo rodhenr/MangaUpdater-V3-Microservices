@@ -11,6 +11,9 @@ public class MangaSource : BaseEntity
     
     [StringLength(100)]
     public required string Url { get; set; }
+    
+    [StringLength(50)]
+    public string? AditionalInfo { get; set; }
 
     public DateTime Timestamp { get; set; }
     

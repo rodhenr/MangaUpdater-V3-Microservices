@@ -37,7 +37,7 @@ public class GetChaptersBackgroundService : BackgroundService
                 if (hasMessages) return;
 
                 await _rabbitMqClient.PublishAsync(queueName, JsonSerializer.Serialize(mangaSource), stoppingToken);
-                _appLogger.LogInformation("Database", $"Fetch chapters request has been sent for Manga ID {mangaSource.MangaId}.");
+                _appLogger.LogInformation("Database", $"Fetch chapters request has been sent for Manga '{mangaSource.MangaName}'.");
             });
 
             await Task.WhenAll(tasks);

@@ -6,5 +6,6 @@ public enum SourcesEnum
     AsuraScans = 2,
     VortexScans = 3,
     Batoto = 4,
-    SnowMachine = 5
+    SnowMachine = 5,
+    Comick = 6
 }

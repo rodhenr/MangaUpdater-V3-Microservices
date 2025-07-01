@@ -41,12 +41,12 @@ public class VortexScansApi : IFetcher
     
     private async Task<VortexScansDto?> GetApiResult(ChapterQueueMessageDto request, int offset, CancellationToken cancellationToken)
     {   
-        var url = $"{request.FullUrl}&skip={offset}&take={TakeParam}&order=desc";
+        var url = $"{request.BaseUrlPart}{request.MangaUrlPart}&skip={offset}&take={TakeParam}&order=desc";
         var response = await _httpClient.GetAsync(url, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Failed to retrieve data for MangaId `{request.MangaId}` from MangaDex");
+            throw new Exception($"Failed to retrieve data for Manga '{request.MangaId}' from MangaDex");
         }
 
         return await response.Content.TryToReadJsonAsync<VortexScansDto>();

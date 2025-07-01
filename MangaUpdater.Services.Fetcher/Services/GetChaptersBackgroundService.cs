@@ -37,7 +37,7 @@ public class GetChaptersBackgroundService : BackgroundService
                             return;
                         }
 
-                        _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga ID {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+                        _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga '{mangaInfo.MangaName}' from '{mangaInfo.Source}'.");
 
                         using var scope = _serviceProvider.CreateScope();
                         var service = scope.ServiceProvider.GetRequiredService<FetcherFactory>();
@@ -53,7 +53,7 @@ public class GetChaptersBackgroundService : BackgroundService
 
                         await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), stoppingToken);
 
-                        _appLogger.LogInformation("Fetcher", $"Queued for processing: {data.Count} chapters for Manga ID = {mangaInfo.MangaId} from '{mangaInfo.Source}'.");
+                        _appLogger.LogInformation("Fetcher", $"Queued for processing: {data.Count} chapters for Manga '{mangaInfo.MangaName}' from '{mangaInfo.Source}'.");
                     }
                     catch (Exception ex)
                     {

@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
-using MangaUpdater.Services.Fetcher.Extensions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
@@ -28,7 +27,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
         try
         {
             var lastChapterDecimal = request.LastChapterNumber.GetNumericPart();
-            var html = await _httpClient.GetStringAsync(request.FullUrl, cancellationToken);
+            var html = await _httpClient.GetStringAsync($"{request.BaseUrlPart}{request.MangaUrlPart}", cancellationToken);
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(html);
@@ -63,14 +62,14 @@ public sealed partial class AsuraScansScrapper : IFetcher
                         (int)request.Source,
                         chapter.Number.ToString("G", CultureInfo.InvariantCulture),
                         DateTime.SpecifyKind(chapter.PublishedAt, DateTimeKind.Utc),
-                        $"{request.FullUrl}/chapter/{chapter.Number}"
+                        $"{request.BaseUrlPart}/{request.MangaUrlPart}/chapter/{chapter.Number}"
                     );
                 })
                 .ToList() ?? [];
         } 
         catch (Exception ex)
         {
-            _appLogger.LogError("Fetch", $"An error occurred while scraping the manga '{request.MangaId}' from URL '{request.FullUrl}'.", ex);
+            _appLogger.LogError("Fetch", $"An error occurred while scraping the manga '{request.MangaName}' from URL '{request.BaseUrlPart}{request.MangaUrlPart}'.", ex);
             return [];
         }
     }
