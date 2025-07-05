@@ -69,6 +69,7 @@ public partial class MangadexApi : IFetcher
         {
             _chapterList.Add(new ChapterResult(
                 request.MangaId,
+                request.MangaName,
                 (int)request.Source,
                 chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
                 DateTime.SpecifyKind(DateTime.Parse(chapter.CreatedAt), DateTimeKind.Utc),

@@ -1,5 +1,4 @@
 using MangaUpdater.Services.Database.Feature.MangaSources;
-using MangaUpdater.Services.Database.Feature.Sources;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Models;
 using MediatR;
@@ -16,9 +15,9 @@ public class MangaSourceController : BaseController
     }
     
     [HttpGet]
-    public async Task<List<MangaSourceDto>> GetMangaSources()
+    public async Task<PagedResultDto<MangaSourceDto>> GetMangaSources(int pageNumber, int pageSize)
     {
-        return await _sender.Send(new GetMangaSourcesQuery());
+        return await _sender.Send(new GetMangaSourcesQuery(pageNumber, pageSize));
     }
 
     [HttpPost]
@@ -27,11 +26,21 @@ public class MangaSourceController : BaseController
         await _sender.Send(new CreateMangaSourceCommand(request));
     }
     
-    
     [HttpGet("manga-distribution")]
     public async Task<List<GetMangaDistributionResponse>> GetMangaDistribution()
     {
         return await _sender.Send(new GetMangaDistributionQuery());
     }
     
+    [HttpPut("{mangaSourceId:int}")]
+    public async Task UpdateManga(int mangaSourceId, [FromBody] UpdateMangaSourceRequest request)
+    {
+        await _sender.Send(new UpdateMangaSourceCommand(mangaSourceId, request));
+    }
+    
+    [HttpDelete("{mangaSourceId:int}")]
+    public async Task DeleteManga(int mangaSourceId)
+    {
+        await _sender.Send(new DeleteMangaSourceCommand(mangaSourceId));
+    }
 }

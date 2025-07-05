@@ -46,7 +46,7 @@ public class VortexScansApi : IFetcher
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Failed to retrieve data for Manga '{request.MangaId}' from MangaDex");
+            throw new Exception($"Failed to retrieve data for Manga '{request.MangaName}' from MangaDex");
         }
 
         return await response.Content.TryToReadJsonAsync<VortexScansDto>();
@@ -66,6 +66,7 @@ public class VortexScansApi : IFetcher
         {
             _chapterList.Add(new ChapterResult(
                 request.MangaId,
+                request.MangaName,
                 (int)request.Source,
                 chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
                 DateTime.SpecifyKind(chapter.CreatedAt, DateTimeKind.Utc),

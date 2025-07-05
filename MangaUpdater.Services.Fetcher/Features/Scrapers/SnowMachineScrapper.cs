@@ -49,7 +49,7 @@ public partial class SnowMachineScrapper : IFetcher
                 var dateString = dateNode?.InnerText.Trim();
                 var chapterDate = ParseDate(dateString);
 
-                chapterList.Add(new ChapterResult(request.MangaId, (int)SourcesEnum.SnowMachine, chapterNumber, chapterDate,url));
+                chapterList.Add(new ChapterResult(request.MangaId, request.MangaName, (int)SourcesEnum.SnowMachine, chapterNumber, chapterDate,url));
             }
             
             return chapterList

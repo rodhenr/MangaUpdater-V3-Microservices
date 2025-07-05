@@ -380,7 +380,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.Property<int>("SourceId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("AditionalInfo")
+                    b.Property<string>("AdditionalInfo")
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
@@ -411,7 +411,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         {
                             MangaId = 1,
                             SourceId = 6,
-                            AditionalInfo = "l_Vjpvkq",
+                            AdditionalInfo = "l_Vjpvkq",
                             Id = 1,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "01-second-life-ranker"
@@ -580,7 +580,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         {
                             MangaId = 22,
                             SourceId = 6,
-                            AditionalInfo = "54Zwh6iY",
+                            AdditionalInfo = "54Zwh6iY",
                             Id = 22,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "00-player-who-returned-10-000-years-later"

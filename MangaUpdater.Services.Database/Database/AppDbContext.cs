@@ -51,7 +51,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
         
         builder.Entity<MangaSource>().HasData(
-            new MangaSource { Id = 1, MangaId = 1, SourceId = 6, Url = "01-second-life-ranker", AditionalInfo = "l_Vjpvkq" },
+            new MangaSource { Id = 1, MangaId = 1, SourceId = 6, Url = "01-second-life-ranker", AdditionalInfo = "l_Vjpvkq" },
             new MangaSource { Id = 2, MangaId = 2, SourceId = 1, Url = "fef2e4da-36f9-48e9-8317-2516f4b6ab14" },
             new MangaSource { Id = 3, MangaId = 3, SourceId = 1, Url = "a2320293-f00e-43a0-8d08-1110cf26a894" },
             new MangaSource { Id = 4, MangaId = 4, SourceId = 1, Url = "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e" },
@@ -72,7 +72,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 19, MangaId = 19, SourceId = 4, Url = "83510-one-piece-official" },
             new MangaSource { Id = 20, MangaId = 20, SourceId = 5, Url = "the-lone-necromancer" },
             new MangaSource { Id = 21, MangaId = 21, SourceId = 1, Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e" },
-            new MangaSource { Id = 22, MangaId = 22, SourceId = 6, Url = "00-player-who-returned-10-000-years-later", AditionalInfo = "54Zwh6iY" }
+            new MangaSource { Id = 22, MangaId = 22, SourceId = 6, Url = "00-player-who-returned-10-000-years-later", AdditionalInfo = "54Zwh6iY" }
         );
     }
 }

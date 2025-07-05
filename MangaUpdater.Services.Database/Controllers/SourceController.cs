@@ -16,9 +16,9 @@ public class SourceController : BaseController
     }
     
     [HttpGet]
-    public async Task<List<SourceDto>> GetSources()
+    public async Task<PagedResultDto<SourceDto>> GetSources(int pageNumber, int pageSize)
     {
-        return await _sender.Send(new GetSourcesQuery());
+        return await _sender.Send(new GetSourcesQuery(pageNumber, pageSize));
     }
     
     [HttpPost]

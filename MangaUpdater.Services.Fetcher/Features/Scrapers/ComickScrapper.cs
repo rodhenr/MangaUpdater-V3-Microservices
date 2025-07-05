@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using MangaUpdater.Services.Fetcher.Interfaces;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
@@ -47,7 +46,7 @@ public partial class ComickScrapper : IFetcher
                     chaptersJson = JsonSerializer.Deserialize<ComickDto>(body, _jsonSerializerOptions);
                 };
                 
-                var url = $"{request.BaseUrlPart}{request.AditionalInfo}/chapters?lang=en&limit=300&page={page}";
+                var url = $"{request.BaseUrlPart}{request.AdditionalInfo}/chapters?lang=en&limit=300&page={page}";
                 await pageContext.GoToAsync(url, WaitUntilNavigation.Networkidle2);
                 await Task.Delay(2000, cancellationToken);
                 
@@ -85,6 +84,7 @@ public partial class ComickScrapper : IFetcher
         {
             _chapterList.Add(new ChapterResult(
                 request.MangaId,
+                request.MangaName,
                 (int)request.Source,
                 chapter.ChapterNumber.ToString(CultureInfo.InvariantCulture),
                 chapter.CreatedAt,
@@ -92,7 +92,4 @@ public partial class ComickScrapper : IFetcher
             ));
         }
     }
-
-    [GeneratedRegex(@"Chapter\s+([0-9]+(?:\.[0-9]+)?[a-zA-Z]?)")]
-    private static partial Regex ComickChapterNumberRegex();
 }

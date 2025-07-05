@@ -38,7 +38,7 @@ public class SaveChapterBackgroundService : BackgroundService
                 
                 await saveChapters.SaveChaptersAsync(data, stoppingToken);
                 
-                _appLogger.LogInformation("Database", $"Saved {data.Count} chapters for MangaId {data.First().MangaId}.");
+                _appLogger.LogInformation("Database", $"Saved {data.Count} chapters for Manga '{data.First().MangaName}'.");
             }
             catch (Exception ex)
             {

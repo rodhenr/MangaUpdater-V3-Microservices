@@ -45,11 +45,7 @@ public class GetChaptersBackgroundService : BackgroundService
 
                         var data = await fetcher.GetChaptersAsync(mangaInfo, stoppingToken);
 
-                        if (data.Count == 0)
-                        {
-                            _appLogger.LogInformation("Fetcher", $"No chapters to save.");
-                            return;
-                        }
+                        if (data.Count == 0) return;
 
                         await _rabbitMqClient.PublishAsync("save-chapters", JsonSerializer.Serialize(data), stoppingToken);
 

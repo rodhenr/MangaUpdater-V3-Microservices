@@ -59,6 +59,7 @@ public sealed partial class AsuraScansScrapper : IFetcher
                     
                     return new ChapterResult(
                         request.MangaId,
+                        request.MangaName,
                         (int)request.Source,
                         chapter.Number.ToString("G", CultureInfo.InvariantCulture),
                         DateTime.SpecifyKind(chapter.PublishedAt, DateTimeKind.Utc),

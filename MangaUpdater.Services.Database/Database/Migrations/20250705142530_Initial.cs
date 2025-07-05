@@ -104,7 +104,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     MangaId = table.Column<int>(type: "integer", nullable: false),
                     SourceId = table.Column<int>(type: "integer", nullable: false),
                     Url = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    AditionalInfo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    AdditionalInfo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
                     Timestamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "timezone('utc', now())"),
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
@@ -170,7 +170,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
             migrationBuilder.InsertData(
                 table: "MangaSources",
-                columns: new[] { "MangaId", "SourceId", "AditionalInfo", "Id", "Url" },
+                columns: new[] { "MangaId", "SourceId", "AdditionalInfo", "Id", "Url" },
                 values: new object[,]
                 {
                     { 1, 6, "l_Vjpvkq", 1, "01-second-life-ranker" },

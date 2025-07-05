@@ -13,7 +13,7 @@ public class MangaSource : BaseEntity
     public required string Url { get; set; }
     
     [StringLength(50)]
-    public string? AditionalInfo { get; set; }
+    public string? AdditionalInfo { get; set; }
 
     public DateTime Timestamp { get; set; }
     

@@ -48,7 +48,7 @@ public partial class BatotoScrapper : IFetcher
                 var dateString = dateNode?.GetAttributeValue("time", string.Empty);
                 var chapterDate = DateTime.Parse(dateString, null, DateTimeStyles.RoundtripKind).ToUniversalTime();
 
-                chapterList.Add(new ChapterResult(request.MangaId, (int)SourcesEnum.Batoto, chapterNumber, chapterDate,url));
+                chapterList.Add(new ChapterResult(request.MangaId, request.MangaName,(int)SourcesEnum.Batoto, chapterNumber, chapterDate,url));
             }
             
             return chapterList

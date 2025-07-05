@@ -23,7 +23,7 @@ public class GetMangaSourcesToFetchHandler : IRequestHandler<GetMangaSourcesToFe
             .Select(x => new ChapterQueueMessageDto(
                 x.Source.BaseUrl,
                 x.Url,
-                x.AditionalInfo,
+                x.AdditionalInfo,
                 x.MangaId,
                 x.Manga.TitleEnglish,
                 (SourcesEnum)x.SourceId,

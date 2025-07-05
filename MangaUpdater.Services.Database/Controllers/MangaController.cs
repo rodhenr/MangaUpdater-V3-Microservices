@@ -43,4 +43,10 @@ public class MangaController : BaseController
     {
         await _sender.Send(new UpdateMangaCommand(mangaId, request));
     }
+    
+    [HttpDelete("{id:int}")]
+    public async Task DeleteManga(int id)
+    {
+        await _sender.Send(new DeleteMangaCommand(id));
+    }
 }
