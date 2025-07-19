@@ -21,6 +21,7 @@ public static class DependencyInjectionExtensions
         services.AddTransient<VortexScansApi>();
         services.AddTransient<BatotoScrapper>();
         services.AddTransient<SnowMachineScrapper>();
+        services.AddSingleton<IFetchChaptersManager, FetchChaptersManager>();
         
         services.AddSingleton<IBrowser>(provider => Puppeteer
             .LaunchAsync(new LaunchOptions
@@ -61,7 +62,8 @@ public static class DependencyInjectionExtensions
 
     private static IServiceCollection AddBackgroundServices(IServiceCollection services)
     {
-        services.AddHostedService<GetChaptersBackgroundService>();
+        
+        services.AddHostedService<FetchChaptersService>();
         
         return services;
     }

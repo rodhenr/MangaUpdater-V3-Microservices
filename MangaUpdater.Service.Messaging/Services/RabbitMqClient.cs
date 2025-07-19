@@ -25,57 +25,53 @@ public class RabbitMqClient : IRabbitMqClient, IAsyncDisposable
     public async Task PublishAsync(string queueName, string message, CancellationToken ct)
     {
         await EnsureConnectionAndChannelAsync(ct);
+        await EnsureQueueDeclaredAsync(queueName, ct);
         
         var body = Encoding.UTF8.GetBytes(message);
-
-        await _channel.QueueDeclareAsync(queue: queueName, durable: false, exclusive: false, autoDelete: false, arguments: null, cancellationToken: ct);
-        await _channel.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body, cancellationToken: ct);
+        await _channel!.BasicPublishAsync(exchange: string.Empty, routingKey: queueName, body: body, cancellationToken: ct);
     }
 
-    public async Task ConsumeAsync(string queueName, Func<string, Task> onMessage, CancellationToken ct)
+    public async Task ConsumeAsync(string queueName, Func<string, Task<bool>> onMessage, CancellationToken ct)
     {
         await EnsureConnectionAndChannelAsync(ct);
+        await EnsureQueueDeclaredAsync(queueName, ct);
         
-        await _channel.QueueDeclareAsync(queue: queueName, durable: false, exclusive: false, autoDelete: false, cancellationToken: ct);
-        
-        var consumer = new AsyncEventingBasicConsumer(_channel);
+        var consumer = new AsyncEventingBasicConsumer(_channel!);
 
-        consumer.ReceivedAsync += async (model, ea) =>
+        consumer.ReceivedAsync += async (model, eventArgs) =>
         {
-            var body = ea.Body.ToArray();
+            var body = eventArgs.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
 
             try
             {
                 Console.WriteLine($"[INFO] Received message: {message}");
-                await onMessage(message);
-                await _channel.BasicAckAsync(ea.DeliveryTag, multiple: false, cancellationToken: ct);
+                var result = await onMessage(message);
+                
+                if (result) 
+                    await _channel!.BasicAckAsync(eventArgs.DeliveryTag, multiple: false, cancellationToken: ct);
+                else 
+                    await _channel!.BasicNackAsync(eventArgs.DeliveryTag, multiple: false, true, cancellationToken: ct);
+                
                 Console.WriteLine("[INFO] Message acknowledged.");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"[ERROR] Failed to process message: {ex.Message}");
-                await _channel.BasicNackAsync(ea.DeliveryTag, multiple: false, requeue: true, cancellationToken: ct);
+                await _channel!.BasicNackAsync(eventArgs.DeliveryTag, multiple: false, requeue: true, cancellationToken: ct);
             }
         };
 
-        await _channel.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: ct);
+        await _channel!.BasicConsumeAsync(queue: queueName, autoAck: false, consumer: consumer, cancellationToken: ct);
         await Task.Delay(Timeout.Infinite, ct);
     }
 
     public async Task<bool> HasMessagesInQueueAsync(string queueName, CancellationToken ct)
     { 
         await EnsureConnectionAndChannelAsync(ct);
+        await EnsureQueueDeclaredAsync(queueName, ct);
         
-        await _channel.QueueDeclareAsync(
-            queue: queueName,
-            durable: false,
-            exclusive: false,
-            autoDelete: false, 
-            cancellationToken: ct);
-        
-        var queueDeclare = await _channel.QueueDeclarePassiveAsync(queueName, ct);
-
+        var queueDeclare = await _channel!.QueueDeclarePassiveAsync(queueName, ct);
         return queueDeclare.MessageCount > 0;
     }
 
@@ -94,6 +90,11 @@ public class RabbitMqClient : IRabbitMqClient, IAsyncDisposable
         }
     }
 
+    private async Task EnsureQueueDeclaredAsync(string queueName, CancellationToken ct)
+    {
+        await _channel!.QueueDeclareAsync(queue: queueName, durable: false, exclusive: false, autoDelete: false, cancellationToken: ct);
+    }
+
     public async ValueTask DisposeAsync()
     {
         if (_channel is not null && _channel.IsOpen)
@@ -107,5 +108,7 @@ public class RabbitMqClient : IRabbitMqClient, IAsyncDisposable
             await _connection.CloseAsync();
             await _connection.DisposeAsync();
         }
+        
+        GC.SuppressFinalize(this);
     }
 }

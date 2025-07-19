@@ -5,13 +5,13 @@ using MangaUpdater.Shared.Interfaces;
 
 namespace MangaUpdater.Services.Database.Services;
 
-public class SaveChapterBackgroundService : BackgroundService
+public class ChapterSaverService : BackgroundService
 {
     private readonly IRabbitMqClient _rabbitMqClient;
     private readonly IServiceProvider _serviceProvider;
     private readonly IAppLogger _appLogger;
     
-    public SaveChapterBackgroundService(IRabbitMqClient rabbitMqClient, IServiceProvider serviceProvider, 
+    public ChapterSaverService(IRabbitMqClient rabbitMqClient, IServiceProvider serviceProvider, 
         IAppLogger appLogger)
     {
         _rabbitMqClient = rabbitMqClient;
@@ -33,16 +33,18 @@ public class SaveChapterBackgroundService : BackgroundService
                 if (data is null)
                 {
                     _appLogger.LogError("Database", $"Failed to deserialize the message.");
-                    return;
+                    return true;
                 }
                 
                 await saveChapters.SaveChaptersAsync(data, stoppingToken);
                 
                 _appLogger.LogInformation("Database", $"Saved {data.Count} chapters for Manga '{data.First().MangaName}'.");
+                return true;
             }
             catch (Exception ex)
             {
                 _appLogger.LogError("Database", "Error processing message.", ex);
+                return true;
             }
         }, stoppingToken);
     }

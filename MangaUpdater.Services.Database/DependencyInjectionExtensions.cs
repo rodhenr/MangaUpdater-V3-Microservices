@@ -15,6 +15,7 @@ public static class DependencyInjectionExtensions
 {
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSingleton<IChapterTaskDispatchManager, ChapterTaskDispatchManager>();
         services.AddScoped<ISaveChapters, SaveChapters>();
         
         var executingAssembly = Assembly.GetExecutingAssembly();
@@ -60,8 +61,8 @@ public static class DependencyInjectionExtensions
 
     private static IServiceCollection AddBackgroundServices(IServiceCollection services)
     {
-        services.AddHostedService<GetChaptersBackgroundService>();
-        services.AddHostedService<SaveChapterBackgroundService>();
+        services.AddHostedService<ChapterTaskDispatcherService>();
+        services.AddHostedService<ChapterSaverService>();
 
         return services;
     }
