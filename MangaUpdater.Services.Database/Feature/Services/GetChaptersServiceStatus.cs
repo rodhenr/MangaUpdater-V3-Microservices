@@ -1,12 +1,13 @@
+using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
+using MangaUpdater.Shared.Models;
 using MediatR;
 
 namespace MangaUpdater.Services.Database.Feature.Services;
 
-public record GetGetChaptersServiceStatusQuery : IRequest<GetChaptersServiceStatusDto>;
-public record GetChaptersServiceStatusDto(DateTime? NextExecutionDate, TimeSpan Delay , string State);
+public record GetGetChaptersServiceStatusQuery(SourcesEnum Source) : IRequest<SourceDetails>;
 
-public class GetChaptersServiceStatus : IRequestHandler<GetGetChaptersServiceStatusQuery, GetChaptersServiceStatusDto>
+public class GetChaptersServiceStatus : IRequestHandler<GetGetChaptersServiceStatusQuery, SourceDetails>
 {
     private readonly IChapterTaskDispatchManager _manager;
 
@@ -15,8 +16,8 @@ public class GetChaptersServiceStatus : IRequestHandler<GetGetChaptersServiceSta
         _manager = manager;
     }
     
-    public Task<GetChaptersServiceStatusDto> Handle(GetGetChaptersServiceStatusQuery request, CancellationToken cancellationToken)
+    public Task<SourceDetails> Handle(GetGetChaptersServiceStatusQuery request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(new GetChaptersServiceStatusDto(_manager.NextExecutionUtc, _manager.Delay, _manager.State.ToString()));
+        return Task.FromResult(_manager.GetExecutionDetails(request.Source));
     }
 }

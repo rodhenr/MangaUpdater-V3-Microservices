@@ -1,9 +1,10 @@
+using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MediatR;
 
 namespace MangaUpdater.Services.Database.Feature.Services;
 
-public record PauseGetChaptersServiceCommand : IRequest;
+public record PauseGetChaptersServiceCommand(SourcesEnum Source) : IRequest;
 
 public class PauseGetChaptersService: IRequestHandler<PauseGetChaptersServiceCommand>
 {
@@ -16,7 +17,7 @@ public class PauseGetChaptersService: IRequestHandler<PauseGetChaptersServiceCom
     
     public Task Handle(PauseGetChaptersServiceCommand request, CancellationToken cancellationToken)
     {
-        _manager.Pause();
+        _manager.PauseBySource(request.Source);
         return Task.CompletedTask;
     }
 }

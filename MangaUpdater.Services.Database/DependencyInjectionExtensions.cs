@@ -4,6 +4,7 @@ using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Feature.Chapters;
 using MangaUpdater.Services.Database.Services;
 using MangaUpdater.Services.Logging;
+using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MangaUpdater.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -61,8 +62,14 @@ public static class DependencyInjectionExtensions
 
     private static IServiceCollection AddBackgroundServices(IServiceCollection services)
     {
-        services.AddHostedService<ChapterTaskDispatcherService>();
         services.AddHostedService<ChapterSaverService>();
+        foreach (var source in Enum.GetValues<SourcesEnum>())
+        {
+            services.AddSingleton<IHostedService>(provider =>
+                ActivatorUtilities.CreateInstance<ChapterTaskDispatcherService>(
+                    provider,
+                    source));
+        }
 
         return services;
     }

@@ -1,4 +1,5 @@
 using MangaUpdater.Services.Database.Feature.Services;
+using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -14,33 +15,33 @@ public class ServicesController : BaseController
         _sender = sender;
     }
     
-    [HttpGet("get-chapters")]
-    public async Task<GetChaptersServiceStatusDto> GetStatus()
+    [HttpGet("get-chapters/sources/{sourceId:int}")]
+    public async Task<SourceDetails> GetStatus(int sourceId)
     {
-        return await _sender.Send(new GetGetChaptersServiceStatusQuery());
+        return await _sender.Send(new GetGetChaptersServiceStatusQuery((SourcesEnum)sourceId));
     }
     
-    [HttpPost("get-chapters/pause")]
-    public async Task Pause()
+    [HttpPost("get-chapters/sources/{sourceId:int}/pause")]
+    public async Task Pause(int sourceId)
     {
-        await _sender.Send(new PauseGetChaptersServiceCommand());
+        await _sender.Send(new PauseGetChaptersServiceCommand((SourcesEnum)sourceId));
     }
 
-    [HttpPost("get-chapters/resume")]
-    public async Task Resume()
+    [HttpPost("get-chapters/sources/{sourceId:int}/resume")]
+    public async Task Resume(int sourceId)
     {
-        await _sender.Send(new ResumeGetChaptersServiceCommand());
+        await _sender.Send(new ResumeGetChaptersServiceCommand((SourcesEnum)sourceId));
     }
 
-    [HttpPost("get-chapters/trigger")]
-    public async Task TriggerNow()
+    [HttpPost("get-chapters/sources/{sourceId:int}/trigger")]
+    public async Task TriggerNow(int sourceId)
     {
-        await _sender.Send(new TriggerGetChapterServiceCommand());
+        await _sender.Send(new TriggerGetChapterServiceCommand((SourcesEnum)sourceId));
     }
 
-    [HttpPost("get-chapters/delay")]
-    public async Task SetDelay([FromBody] ChapterServiceSetDelayRequest minutes)
+    [HttpPost("get-chapters/sources/{sourceId:int}/delay")]
+    public async Task SetDelay(int sourceId, [FromBody] ChapterServiceSetDelayRequest minutes)
     {
-        await _sender.Send(new SetGetChaptersServiceDelayCommand(minutes));
+        await _sender.Send(new SetGetChaptersServiceDelayCommand((SourcesEnum)sourceId, minutes));
     }
 }

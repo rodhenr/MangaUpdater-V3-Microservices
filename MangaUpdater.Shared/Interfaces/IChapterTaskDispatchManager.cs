@@ -1,16 +1,19 @@
 using MangaUpdater.Shared.Enums;
+using MangaUpdater.Shared.Models;
 
 namespace MangaUpdater.Shared.Interfaces;
 
 public interface IChapterTaskDispatchManager
 {
-    TimeSpan Delay { get; set; }
-    ServicesStateEnum State { get; }
-    DateTime? NextExecutionUtc { get; }
-    
-    void Pause();
-    void Resume();
-    void TriggerNow();
+    SourceDetails GetExecutionDetails(SourcesEnum source);
+    ServicesStateEnum GetStateBySource(SourcesEnum source);
+    void PauseBySource(SourcesEnum source);
+    void ResumeBySource(SourcesEnum source);
+    void TriggerNowBySource(SourcesEnum source);
 
-    Task WaitForNextExecutionAsync(CancellationToken cancellationToken);
+    TimeSpan GetDelayBySource(SourcesEnum source);
+    void SetDelayBySource(SourcesEnum source, TimeSpan delay);
+    DateTime? GetNextExecutionUtcBySource(SourcesEnum source);
+
+    Task WaitForNextExecutionAsync(SourcesEnum source, CancellationToken cancellationToken);
 }

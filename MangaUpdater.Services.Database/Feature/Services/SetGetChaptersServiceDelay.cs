@@ -1,10 +1,11 @@
+using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MangaUpdater.Shared.Models;
 using MediatR;
 
 namespace MangaUpdater.Services.Database.Feature.Services;
 
-public record SetGetChaptersServiceDelayCommand(ChapterServiceSetDelayRequest Data) : IRequest;
+public record SetGetChaptersServiceDelayCommand(SourcesEnum Source, ChapterServiceSetDelayRequest Data) : IRequest;
 
 public class SetGetChaptersServiceDelay : IRequestHandler<SetGetChaptersServiceDelayCommand>
 {
@@ -17,7 +18,7 @@ public class SetGetChaptersServiceDelay : IRequestHandler<SetGetChaptersServiceD
     
     public Task Handle(SetGetChaptersServiceDelayCommand request, CancellationToken cancellationToken)
     {
-        _manager.Delay = TimeSpan.FromMinutes(request.Data.Minutes);
+        _manager.SetDelayBySource(request.Source, TimeSpan.FromMinutes(request.Data.Minutes));
         return Task.CompletedTask;
     }
 }

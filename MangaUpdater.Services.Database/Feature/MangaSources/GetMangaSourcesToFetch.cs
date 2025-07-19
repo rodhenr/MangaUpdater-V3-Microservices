@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MangaUpdater.Services.Database.Feature.MangaSources;
 
-public record GetMangaSourcesToFetchQuery : IRequest<List<ChapterQueueMessageDto>>;
+public record GetMangaSourcesToFetchQuery(SourcesEnum Source) : IRequest<List<ChapterQueueMessageDto>>;
 
 public class GetMangaSourcesToFetchHandler : IRequestHandler<GetMangaSourcesToFetchQuery, List<ChapterQueueMessageDto>>
 {
@@ -20,6 +20,7 @@ public class GetMangaSourcesToFetchHandler : IRequestHandler<GetMangaSourcesToFe
     public async Task<List<ChapterQueueMessageDto>> Handle(GetMangaSourcesToFetchQuery request, CancellationToken cancellationToken)
     {
         return await _context.MangaSources
+            .Where(x => x.SourceId == (int)request.Source)
             .Select(x => new ChapterQueueMessageDto(
                 x.Source.BaseUrl,
                 x.Url,

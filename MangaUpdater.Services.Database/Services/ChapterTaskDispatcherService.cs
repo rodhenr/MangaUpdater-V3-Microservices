@@ -3,8 +3,6 @@ using MangaUpdater.Services.Database.Feature.MangaSources;
 using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MediatR;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace MangaUpdater.Services.Database.Services;
 
@@ -17,33 +15,37 @@ namespace MangaUpdater.Services.Database.Services;
 /// </summary>
 public class ChapterTaskDispatcherService : BackgroundService
 {
+    private readonly SourcesEnum _source;
     private readonly IRabbitMqClient _rabbitMqClient;
     private readonly IServiceProvider _serviceProvider;
     private readonly IAppLogger _appLogger;
     private readonly IChapterTaskDispatchManager _manager;
+    private readonly string _queueName;
 
     public ChapterTaskDispatcherService(
+        SourcesEnum source,
         IRabbitMqClient rabbitMqClient,
         IServiceProvider serviceProvider,
         IAppLogger appLogger,
         IChapterTaskDispatchManager manager)
     {
+        _source = source;
         _rabbitMqClient = rabbitMqClient;
         _serviceProvider = serviceProvider;
         _appLogger = appLogger;
         _manager = manager;
+        _queueName = $"get-chapters-{_source}";
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _appLogger.LogInformation("Database", "GetChaptersBackgroundService started.");
+        _appLogger.LogInformation("Database", $"Chapters dispatcher for '{_source}' started.");
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (_manager.State == ServicesStateEnum.Paused)
+            if (_manager.GetStateBySource(_source) == ServicesStateEnum.Paused)
             {
-                _appLogger.LogInformation("Database", "Service is paused. Waiting for resume...");
-                await _manager.WaitForNextExecutionAsync(stoppingToken);
+                await _manager.WaitForNextExecutionAsync(_source, stoppingToken);
                 continue;
             }
 
@@ -51,33 +53,31 @@ public class ChapterTaskDispatcherService : BackgroundService
             {
                 using var scope = _serviceProvider.CreateScope();
                 var sender = scope.ServiceProvider.GetRequiredService<ISender>();
-                var data = await sender.Send(new GetMangaSourcesToFetchQuery(), stoppingToken);
+                
+                var data = await sender.Send(new GetMangaSourcesToFetchQuery(_source), stoppingToken);
 
-                _appLogger.LogInformation("Database", $"{data.Count} mangas to fetch.");
+                _appLogger.LogInformation("Database", $"[{_source}] {data.Count} mangas to fetch.");
 
                 var tasks = data.Select(async mangaSource =>
                 {
-                    var queueName = $"get-chapters-{mangaSource.Source}";
-                    var hasMessages = await _rabbitMqClient.HasMessagesInQueueAsync(queueName, stoppingToken);
-
+                    var hasMessages = await _rabbitMqClient.HasMessagesInQueueAsync(_queueName, stoppingToken);
                     if (hasMessages) return;
 
                     var payload = JsonSerializer.Serialize(mangaSource);
-                    await _rabbitMqClient.PublishAsync(queueName, payload, stoppingToken);
-                    _appLogger.LogInformation("Database", $"Fetch request sent for '{mangaSource.MangaName}'.");
+                    await _rabbitMqClient.PublishAsync(_queueName, payload, stoppingToken);
+                    _appLogger.LogInformation("Database", $"[{_source}] Fetch request sent for '{mangaSource.MangaName}'.");
                 });
 
                 await Task.WhenAll(tasks);
             }
             catch (Exception ex)
             {
-                _appLogger.LogError("Database", $"Error during background execution: {ex.Message}", ex);
+                _appLogger.LogError("Database", $"[{_source}] Error during execution: {ex.Message}", ex);
             }
 
-            _appLogger.LogInformation("Database", $"Waiting {_manager.Delay.TotalMinutes} minutes before next execution.");
-            await _manager.WaitForNextExecutionAsync(stoppingToken);
+            await _manager.WaitForNextExecutionAsync(_source, stoppingToken);
         }
 
-        _appLogger.LogInformation("Database", "GetChaptersBackgroundService is stopping.");
+        _appLogger.LogInformation("Database", $"Chapters dispatcher for {_source} stopping...");
     }
 }

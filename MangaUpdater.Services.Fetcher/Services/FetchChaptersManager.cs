@@ -14,7 +14,7 @@ public class FetchChaptersManager : IFetchChaptersManager
     
     public ServicesStateEnum? GetQueueState(string queueName)
     {
-        if (QueueStates.TryGetValue(queueName, out ServicesStateEnum state))
+        if (QueueStates.TryGetValue(queueName, out var state))
             return state;
 
         return null;
