@@ -8,6 +8,14 @@ builder.Services.AddCors();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
 
+// Named HttpClient for internal Database service (configure Database:BaseUrl in appsettings)
+builder.Services.AddHttpClient("Database", (sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var baseUrl = config["Database:BaseUrl"] ?? "http://localhost:5002/";
+    client.BaseAddress = new Uri(baseUrl);
+});
+
 // Mediatr
 var executingAssembly = Assembly.GetExecutingAssembly();
 builder.Services.AddMediatR(cfg =>
