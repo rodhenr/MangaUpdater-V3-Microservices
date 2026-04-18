@@ -1,5 +1,5 @@
 # Build stage
-FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS build
 WORKDIR /app
 
 # Copy csproj and restore as distinct layers
@@ -12,7 +12,7 @@ WORKDIR "/app/MangaUpdater.Services.API"
 RUN dotnet publish "MangaUpdater.Services.API.csproj" -c Release -o /app/publish
 
 # Final stage
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
 

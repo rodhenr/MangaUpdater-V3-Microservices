@@ -1,5 +1,5 @@
 # Use .NET SDK (Alpine version) for migrations
-FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS migrations
+FROM mcr.microsoft.com/dotnet/sdk:10.0-alpine AS migrations
 
 # Set working directory
 WORKDIR /app
