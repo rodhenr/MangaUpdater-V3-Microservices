@@ -27,6 +27,10 @@ if (app.Environment.IsDevelopment())
 app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseHttpsRedirection();
 app.UseAuthorization();
+
+// Correlation middleware
+app.UseMiddleware<MangaUpdater.Shared.Middlewares.CorrelationIdMiddleware>();
+
 app.MapControllers();
 
 app.Run();

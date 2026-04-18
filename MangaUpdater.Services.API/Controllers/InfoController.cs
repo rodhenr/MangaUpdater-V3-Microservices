@@ -8,10 +8,12 @@ namespace MangaUpdater.Services.API.Controllers;
 public class InfoController : BaseController
 {
     private readonly ISender _sender;
+    private readonly ILogger<InfoController> _logger;
 
-    public InfoController(ISender sender)
+    public InfoController(ISender sender, ILogger<InfoController> logger)
     {
         _sender = sender;
+        _logger = logger;
     }
 
     [HttpGet("user/{username}/chapters")]

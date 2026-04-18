@@ -9,9 +9,12 @@ namespace MangaUpdater.Services.Database.Controllers;
 public class MangaController : BaseController
 {
     private readonly ISender _sender;
-    public MangaController(ISender sender)
+    private readonly ILogger<MangaController> _logger;
+
+    public MangaController(ISender sender, ILogger<MangaController> logger)
     {
         _sender = sender;
+        _logger = logger;
     }
     
     [HttpGet]

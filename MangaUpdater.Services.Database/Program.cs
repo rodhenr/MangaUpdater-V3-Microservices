@@ -30,6 +30,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Middlewares
+app.UseMiddleware<MangaUpdater.Shared.Middlewares.CorrelationIdMiddleware>();
 app.UseMiddleware<HttpExceptionMiddleware>();
 
 app.Run();

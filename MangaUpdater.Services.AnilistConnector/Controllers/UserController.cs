@@ -7,9 +7,12 @@ namespace MangaUpdater.Services.AnilistConnector.Controllers;
 public class UserController : BaseController
 {
     private readonly UserMangaCollection _userMangaCollection;
-    public UserController()
+    private readonly ILogger<UserController> _logger;
+
+    public UserController(ILogger<UserController> logger)
     {
         _userMangaCollection = new UserMangaCollection();
+        _logger = logger;
     }
 
     [HttpGet("{username}")]

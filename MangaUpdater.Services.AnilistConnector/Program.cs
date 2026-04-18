@@ -20,6 +20,10 @@ if (app.Environment.IsDevelopment())
 
 // Built-in
 app.UseHttpsRedirection();
+
+// Correlation middleware
+app.UseMiddleware<MangaUpdater.Shared.Middlewares.CorrelationIdMiddleware>();
+
 app.MapControllers();
 
 // Middlewares

@@ -8,10 +8,12 @@ namespace MangaUpdater.Services.Fetcher.Controllers;
 public class FetcherController : BaseController
 {
     private readonly FetcherFactory _factory;
-    
-    public FetcherController(FetcherFactory factory)
+    private readonly ILogger<FetcherController> _logger;
+
+    public FetcherController(FetcherFactory factory, ILogger<FetcherController> logger)
     {
         _factory = factory;
+        _logger = logger;
     }
     
     [HttpPost]
