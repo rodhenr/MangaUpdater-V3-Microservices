@@ -18,11 +18,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         builder.Entity<Source>().HasData(
             new Source { Id = 1, Name = "MangaDex", BaseUrl = "https://api.mangadex.org/manga/" },
-            new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asuracomic.net/series/" },
+            new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asurascans.com" },
             new Source { Id = 3, Name = "VortexScans", BaseUrl = "https://vortexscans.org/api/chapters?postId=" },
             new Source { Id = 4, Name = "Batoto", BaseUrl = "https://xbato.com/title/" },
             new Source { Id = 5, Name = "SnowMachine", BaseUrl = "https://www.snowmtl.ru/comics/" },
-            new Source { Id = 6, Name = "Comick", BaseUrl = "https://api.comick.fun/comic/" }
+            new Source { Id = 6, Name = "Comick", BaseUrl = "https://api.comick.dev/comic/" }
         );
 
         builder.Entity<Manga>().HasData(
@@ -55,16 +55,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 2, MangaId = 2, SourceId = 1, Url = "fef2e4da-36f9-48e9-8317-2516f4b6ab14" },
             new MangaSource { Id = 3, MangaId = 3, SourceId = 1, Url = "a2320293-f00e-43a0-8d08-1110cf26a894" },
             new MangaSource { Id = 4, MangaId = 4, SourceId = 1, Url = "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e" },
-            new MangaSource { Id = 5, MangaId = 5, SourceId = 2, Url = "revenge-of-the-iron-blooded-sword-hound-da0c5e71" },
-            new MangaSource { Id = 6, MangaId = 6, SourceId = 2, Url = "swordmasters-youngest-son-e6946e27" },
-            new MangaSource { Id = 7, MangaId = 7, SourceId = 2, Url = "return-of-the-sss-class-ranker-f6fde482" },
-            new MangaSource { Id = 8, MangaId = 8, SourceId = 2, Url = "the-max-level-hero-has-returned-cc806d84" },
-            new MangaSource { Id = 9, MangaId = 9, SourceId = 2, Url = "i-obtained-a-mythic-item-5c23ef60" },
-            new MangaSource { Id = 10, MangaId = 10, SourceId = 2, Url = "pick-me-up-infinite-gacha-e764ac18" },
+            new MangaSource { Id = 5, MangaId = 5, SourceId = 2, Url = "/comics/revenge-of-the-iron-blooded-sword-hound-5abb513e" },
+            new MangaSource { Id = 6, MangaId = 6, SourceId = 2, Url = "/comics/swordmasters-youngest-son-5abb513e" },
+            new MangaSource { Id = 7, MangaId = 7, SourceId = 2, Url = "/comics/return-of-the-sss-class-ranker-5abb513e" },
+            new MangaSource { Id = 8, MangaId = 8, SourceId = 2, Url = "/comics/the-max-level-hero-has-returned-5abb513e" },
+            new MangaSource { Id = 9, MangaId = 9, SourceId = 2, Url = "/comics/i-obtained-a-mythic-item-5abb513e" },
+            new MangaSource { Id = 10, MangaId = 10, SourceId = 2, Url = "/comics/pick-me-up-infinite-gacha-5abb513e" },
             new MangaSource { Id = 11, MangaId = 11, SourceId = 5, Url = "the-extra-is-too-powerful" },
-            new MangaSource { Id = 12, MangaId = 12, SourceId = 2, Url = "absolute-necromancer-f3d79560" },
-            new MangaSource { Id = 13, MangaId = 13, SourceId = 2, Url = "player-who-cant-level-up-6937decb" },
-            new MangaSource { Id = 14, MangaId = 14, SourceId = 2, Url = "solo-max-level-newbie-6fb35ee2" },
+            new MangaSource { Id = 12, MangaId = 12, SourceId = 2, Url = "/comics/absolute-necromancer-5abb513e" },
+            new MangaSource { Id = 13, MangaId = 13, SourceId = 2, Url = "/comics/player-who-cant-level-up-5abb513e" },
+            new MangaSource { Id = 14, MangaId = 14, SourceId = 2, Url = "/comics/solo-max-level-newbie-5abb513e" },
             new MangaSource { Id = 15, MangaId = 15, SourceId = 1, Url = "0b171f64-89a5-4c37-b5f9-75cca57e8787" },
             new MangaSource { Id = 16, MangaId = 16, SourceId = 1, Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" },
             new MangaSource { Id = 17, MangaId = 17, SourceId = 3, Url = "214" },

@@ -3,17 +3,20 @@ using System;
 using MangaUpdater.Services.Database.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MangaUpdater.Services.Database.Database.Migrations
+namespace MangaUpdater.Services.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260418215950_UpdateSeedMangaSource")]
+    partial class UpdateSeedMangaSource
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -446,7 +449,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 5,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/revenge-of-the-iron-blooded-sword-hound-5abb513e"
+                            Url = "revenge-of-the-iron-blooded-sword-hound-5abb513e"
                         },
                         new
                         {
@@ -454,7 +457,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 6,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/swordmasters-youngest-son-5abb513e"
+                            Url = "swordmasters-youngest-son-5abb513e"
                         },
                         new
                         {
@@ -462,7 +465,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 7,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/return-of-the-sss-class-ranker-5abb513e"
+                            Url = "return-of-the-sss-class-ranker-5abb513e"
                         },
                         new
                         {
@@ -470,7 +473,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 8,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/the-max-level-hero-has-returned-5abb513e"
+                            Url = "the-max-level-hero-has-returned-5abb513e"
                         },
                         new
                         {
@@ -478,7 +481,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 9,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/i-obtained-a-mythic-item-5abb513e"
+                            Url = "i-obtained-a-mythic-item-5abb513e"
                         },
                         new
                         {
@@ -486,7 +489,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 10,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/pick-me-up-infinite-gacha-5abb513e"
+                            Url = "pick-me-up-infinite-gacha-5abb513e"
                         },
                         new
                         {
@@ -502,7 +505,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 12,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/absolute-necromancer-5abb513e"
+                            Url = "absolute-necromancer-5abb513e"
                         },
                         new
                         {
@@ -510,7 +513,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 13,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/player-who-cant-level-up-5abb513e"
+                            Url = "player-who-cant-level-up-5abb513e"
                         },
                         new
                         {
@@ -518,7 +521,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                             SourceId = 2,
                             Id = 14,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "/comics/solo-max-level-newbie-5abb513e"
+                            Url = "solo-max-level-newbie-5abb513e"
                         },
                         new
                         {
@@ -625,7 +628,7 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         new
                         {
                             Id = 2,
-                            BaseUrl = "https://asurascans.com",
+                            BaseUrl = "https://asurascans.com/comics/",
                             Name = "AsuraScans",
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
