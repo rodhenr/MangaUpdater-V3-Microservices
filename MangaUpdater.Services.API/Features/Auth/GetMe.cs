@@ -1,28 +1,9 @@
+using Microsoft.AspNetCore.WebUtilities;
+using MangaUpdater.Shared.Exceptions;
 using MangaUpdater.Shared.Models;
 using MediatR;
 
 namespace MangaUpdater.Services.API.Features.Auth;
-
-public record LoginCommand(LoginRequest Request) : IRequest<LoginResponseDto?>;
-
-public class LoginHandler : IRequestHandler<LoginCommand, LoginResponseDto?>
-{
-    private readonly IHttpClientFactory _httpFactory;
-
-    public LoginHandler(IHttpClientFactory httpFactory)
-    {
-        _httpFactory = httpFactory;
-    }
-
-    public async Task<LoginResponseDto?> Handle(LoginCommand request, CancellationToken cancellationToken)
-    {
-        var client = _httpFactory.CreateClient("Database");
-        var resp = await client.PostAsJsonAsync("api/auth/login", request.Request, cancellationToken);
-        resp.EnsureSuccessStatusCode();
-        var dto = await resp.Content.ReadFromJsonAsync<LoginResponseDto>(cancellationToken: cancellationToken);
-        return dto;
-    }
-}
 
 public record GetMeQuery() : IRequest<LoginUserDto?>;
 
@@ -40,13 +21,22 @@ public class GetMeHandler : IRequestHandler<GetMeQuery, LoginUserDto?>
     public async Task<LoginUserDto?> Handle(GetMeQuery request, CancellationToken cancellationToken)
     {
         var client = _httpFactory.CreateClient("Database");
-        var auth = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].FirstOrDefault();
+        var auth = _httpContextAccessor.HttpContext?.Request.Headers.Authorization.FirstOrDefault();
         
         if (!string.IsNullOrEmpty(auth)) 
             client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", auth);
         
         var resp = await client.GetAsync("api/auth/me", cancellationToken);
-        resp.EnsureSuccessStatusCode();
+
+        if (!resp.IsSuccessStatusCode)
+        {
+            var message = await resp.Content.ReadAsStringAsync(cancellationToken);
+            throw new HttpResponseException(
+                resp.StatusCode,
+                string.IsNullOrWhiteSpace(message)
+                    ? resp.ReasonPhrase ?? ReasonPhrases.GetReasonPhrase((int)resp.StatusCode)
+                    : message);
+        }
         
         var dto = await resp.Content.ReadFromJsonAsync<LoginUserDto>(cancellationToken: cancellationToken);
         return dto;

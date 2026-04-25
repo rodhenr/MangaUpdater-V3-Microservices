@@ -7,12 +7,16 @@ builder.Services.AddControllers();
 builder.Services.AddCors();
 builder.Services.AddOpenApi();
 builder.Services.AddHttpClient();
+builder.Services.AddHttpContextAccessor();
 
-// Named HttpClient for internal Database service (configure Database:BaseUrl in appsettings)
+// Named HttpClient for internal Database service.
 builder.Services.AddHttpClient("Database", (sp, client) =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
-    var baseUrl = config["Database:BaseUrl"] ?? "http://localhost:5002/";
+    var baseUrl =
+        config["Microservices:Database"] ??
+        config["Database:BaseUrl"] ??
+        "http://localhost:5002/";
     client.BaseAddress = new Uri(baseUrl);
 });
 
@@ -41,6 +45,7 @@ app.UseHttpsRedirection();
 
 // Add CorrelationId middleware before controllers
 app.UseMiddleware<MangaUpdater.Shared.Middlewares.CorrelationIdMiddleware>();
+app.UseMiddleware<MangaUpdater.Shared.Middlewares.HttpExceptionMiddleware>();
 
 app.MapControllers();
 

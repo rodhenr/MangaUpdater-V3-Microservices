@@ -2,10 +2,12 @@ using MangaUpdater.Services.Database.Feature.Sources;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MangaUpdater.Services.Database.Controllers;
 
+[Authorize(Roles = "admin")]
 public class SourceController : BaseController
 {
     private readonly ISender _sender;
@@ -25,5 +27,11 @@ public class SourceController : BaseController
     public async Task CreateSource([FromBody] CreateSourceRequest request)
     {
         await _sender.Send(new CreateSourceCommand(request));
+    }
+
+    [HttpPut("{sourceId:int}")]
+    public async Task UpdateSource(int sourceId, [FromBody] UpdateSourceRequest request)
+    {
+        await _sender.Send(new UpdateSourceCommand(sourceId, request));
     }
 }

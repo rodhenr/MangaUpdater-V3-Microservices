@@ -2,10 +2,12 @@ using MangaUpdater.Services.Database.Feature.MangaSources;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MangaUpdater.Services.Database.Controllers;
 
+[Authorize(Roles = "admin")]
 public class MangaSourceController : BaseController
 {
     private readonly ISender _sender;

@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Manga> Mangas { get; set; }
     public DbSet<MangaSource> MangaSources { get; set; }
     public DbSet<Source> Sources { get; set; }
+    public DbSet<User> Users { get; set; }
     
     protected override void OnModelCreating(ModelBuilder builder)
     {

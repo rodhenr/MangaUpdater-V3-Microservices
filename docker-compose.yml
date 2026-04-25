@@ -101,6 +101,7 @@ services:
       - RabbitMqSettings__Password=guest
       - RabbitMqSettings__Port=5672
       - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=MangaUpdater;Username=usuario;Password=123456789!
+      - Jwt__Key=a1b2c3d4e5f60718293a4b5c6d7e8f90123456789abcdef0a1b2c3d4e5f6071
     networks:
       - app_network
 

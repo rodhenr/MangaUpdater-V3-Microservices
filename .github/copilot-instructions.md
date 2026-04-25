@@ -12,6 +12,7 @@ Rules
 - Follow project conventions and folder structure strictly.
 - Do not introduce unnecessary complexity or new frameworks.
 - Prefer consistency over theoretical “best practices” when the codebase already has patterns.
+ - If a `Features` folder exists for a project, place all business logic, command/query handlers, and core processing there (use MediatR feature handlers where applicable). Controllers should be thin and only delegate to `Features` (no business logic in controllers).
 
 Code Style
 - Match naming conventions used in the repository (PascalCase for types, methods; camelCase for locals/params).

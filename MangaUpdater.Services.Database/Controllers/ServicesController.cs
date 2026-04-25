@@ -2,10 +2,12 @@ using MangaUpdater.Services.Database.Feature.Services;
 using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MangaUpdater.Services.Database.Controllers;
 
+[Authorize(Roles = "admin")]
 public class ServicesController : BaseController
 {
     private readonly ISender _sender;
