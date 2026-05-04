@@ -1,10 +1,9 @@
-using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MediatR;
 
 namespace MangaUpdater.Services.Database.Feature.Services;
 
-public record TriggerGetChapterServiceCommand(SourcesEnum Source) : IRequest;
+public record TriggerGetChapterServiceCommand(int SourceId) : IRequest;
 
 public class TriggerGetChapterService : IRequestHandler<TriggerGetChapterServiceCommand>
 {
@@ -17,7 +16,7 @@ public class TriggerGetChapterService : IRequestHandler<TriggerGetChapterService
     
     public Task Handle(TriggerGetChapterServiceCommand request, CancellationToken cancellationToken)
     {
-        _manager.TriggerNowBySource(request.Source);
+        _manager.TriggerNowBySource(request.SourceId);
         return Unit.Task;
     }
 }

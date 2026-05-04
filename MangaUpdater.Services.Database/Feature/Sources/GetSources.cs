@@ -27,10 +27,21 @@ public class GetSourcesHandler : IRequestHandler<GetSourcesQuery, PagedResultDto
             .Select(x => new SourceDto(
                 x.Id,
                 x.Name,
-                x.BaseUrl
+                x.Slug,
+                x.BaseUrl,
+                x.IsEnabled,
+                x.EngineType,
+                x.RequestMode,
+                x.RequiresBrowser,
+                x.DefaultUserAgent,
+                x.RateLimitMilliseconds,
+                x.QueueName,
+                x.SupportsPagination,
+                x.Timestamp
             ))
             .ToListAsync(cancellationToken);
         
-        return new PagedResultDto<SourceDto>(sources, sourcesCount, request.PageNumber,request.PageSize,(int)Math.Ceiling((double)sourcesCount / request.PageSize));
+        return new PagedResultDto<SourceDto>(sources, sourcesCount, request.PageNumber,request.PageSize,
+            (int)Math.Ceiling((double)sourcesCount / request.PageSize));
     }
 }

@@ -31,7 +31,7 @@ public class Media
     public Title Title { get; set; }
     public string Status { get; set; }
     public List<string> Genres { get; set; }
-    public int AverageScore { get; set; }
+    public int? AverageScore { get; set; }
 }
 
 public class CoverImage

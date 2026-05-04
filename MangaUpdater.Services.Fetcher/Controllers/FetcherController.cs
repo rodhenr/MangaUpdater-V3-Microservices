@@ -7,19 +7,16 @@ namespace MangaUpdater.Services.Fetcher.Controllers;
 
 public class FetcherController : BaseController
 {
-    private readonly FetcherFactory _factory;
-    private readonly ILogger<FetcherController> _logger;
+    private readonly ScraperOrchestrator _scraperOrchestrator;
 
-    public FetcherController(FetcherFactory factory, ILogger<FetcherController> logger)
+    public FetcherController(ScraperOrchestrator scraperOrchestrator)
     {
-        _factory = factory;
-        _logger = logger;
+        _scraperOrchestrator = scraperOrchestrator;
     }
     
     [HttpPost]
     public async Task<List<ChapterResult>> UpdateChapters(ChapterQueueMessageDto request, CancellationToken ct)
     {
-        var service = _factory.GetChapterFetcher(request.Source);
-        return await service.GetChaptersAsync(request, ct);
+        return await _scraperOrchestrator.FetchAsync(request, ct);
     }
 }

@@ -4,7 +4,6 @@ using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Feature.Chapters;
 using MangaUpdater.Services.Database.Services;
 using MangaUpdater.Services.Logging;
-using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MangaUpdater.Shared.Models;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +17,7 @@ public static class DependencyInjectionExtensions
     {
         services.AddSingleton<IChapterTaskDispatchManager, ChapterTaskDispatchManager>();
         services.AddScoped<ISaveChapters, SaveChapters>();
+        services.AddHttpClient();
         
         var executingAssembly = Assembly.GetExecutingAssembly();
         services.AddMediatR(cfg =>
@@ -33,15 +33,13 @@ public static class DependencyInjectionExtensions
         return services;
     }
     
-    private static IServiceCollection AddDatabaseServices(IServiceCollection services, IConfiguration configuration)
+    private static void AddDatabaseServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
-
-        return services;
     }
 
-    private static IServiceCollection AddRabbitMqServices(IServiceCollection services, IConfiguration configuration)
+    private static void AddRabbitMqServices(IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMqSettings"));
 
@@ -56,35 +54,21 @@ public static class DependencyInjectionExtensions
                 settings.Port
             );
         });
-
-        return services;
     }
 
-    private static IServiceCollection AddBackgroundServices(IServiceCollection services)
+    private static void AddBackgroundServices(IServiceCollection services)
     {
         services.AddHostedService<ChapterSaverService>();
-        foreach (var source in Enum.GetValues<SourcesEnum>())
-        {
-            services.AddSingleton<IHostedService>(provider =>
-                ActivatorUtilities.CreateInstance<ChapterTaskDispatcherService>(
-                    provider,
-                    source));
-        }
-
-        return services;
+        services.AddHostedService<ChapterTaskDispatcherService>();
     }
 
-    private static IServiceCollection AddSerilogServices(IServiceCollection services, IConfiguration configuration)
+    private static void AddSerilogServices(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddSingleton<IAppLogger, AppLogger>(sp =>
+        services.AddSingleton<IAppLogger, AppLogger>(_ =>
         {
             var defaultConnection = configuration.GetConnectionString("DefaultConnection");
 
-            if (defaultConnection is null) throw new Exception("Invalid connection string");
-
-            return new AppLogger(defaultConnection);
+            return defaultConnection is null ? throw new Exception("Invalid connection string") : new AppLogger(defaultConnection);
         });
-
-        return services;
     }
 }

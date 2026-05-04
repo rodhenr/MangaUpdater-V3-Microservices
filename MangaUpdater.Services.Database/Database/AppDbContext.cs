@@ -9,6 +9,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<LogEvent> LogEvents { get; set; }
     public DbSet<Manga> Mangas { get; set; }
     public DbSet<MangaSource> MangaSources { get; set; }
+    public DbSet<SourceApiProfile> SourceApiProfiles { get; set; }
+    public DbSet<SourceRequestProfile> SourceRequestProfiles { get; set; }
+    public DbSet<SourceScrapingProfile> SourceScrapingProfiles { get; set; }
     public DbSet<Source> Sources { get; set; }
     public DbSet<User> Users { get; set; }
     
@@ -18,12 +21,147 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
         builder.Entity<Source>().HasData(
-            new Source { Id = 1, Name = "MangaDex", BaseUrl = "https://api.mangadex.org/manga/" },
-            new Source { Id = 2, Name = "AsuraScans", BaseUrl = "https://asurascans.com" },
-            new Source { Id = 3, Name = "VortexScans", BaseUrl = "https://vortexscans.org/api/chapters?postId=" },
-            new Source { Id = 4, Name = "Batoto", BaseUrl = "https://xbato.com/title/" },
-            new Source { Id = 5, Name = "SnowMachine", BaseUrl = "https://www.snowmtl.ru/comics/" },
-            new Source { Id = 6, Name = "Comick", BaseUrl = "https://api.comick.dev/comic/" }
+            new Source
+            {
+                Id = 1,
+                Name = "MangaDex",
+                Slug = "mangadex",
+                BaseUrl = "https://api.mangadex.org/manga/",
+                IsEnabled = true,
+                EngineType = "JsonApi",
+                RequestMode = "HttpGet",
+                RequiresBrowser = false,
+                DefaultUserAgent = "MangaUpdater/1.0",
+                QueueName = "get-chapters-Mangadex",
+                SupportsPagination = true
+            },
+            new Source
+            {
+                Id = 2,
+                Name = "AsuraScans",
+                Slug = "asurascans",
+                BaseUrl = "https://asurascans.com",
+                IsEnabled = true,
+                EngineType = "HtmlXPath",
+                RequestMode = "HttpGet",
+                RequiresBrowser = false,
+                QueueName = "get-chapters-AsuraScans",
+                SupportsPagination = false
+            },
+            new Source
+            {
+                Id = 3,
+                Name = "VortexScans",
+                Slug = "vortexscans",
+                BaseUrl = "https://vortexscans.org/api/chapters?postId=",
+                IsEnabled = true,
+                EngineType = "JsonApi",
+                RequestMode = "HttpGet",
+                RequiresBrowser = false,
+                QueueName = "get-chapters-VortexScans",
+                SupportsPagination = true
+            }
+        );
+
+        builder.Entity<SourceRequestProfile>().HasData(
+            new SourceRequestProfile
+            {
+                Id = 1,
+                SourceId = 1,
+                IsActive = true,
+                Version = 1,
+                Method = "GET",
+                UrlTemplate = "{BaseUrl}{MangaUrlPart}/feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=200&offset={Offset}",
+                HeadersJson = "{\"User-Agent\":\"MangaUpdater/1.0\"}",
+                TimeoutSeconds = 30,
+                UseCookies = false,
+                AcceptLanguage = "en-US"
+            },
+            new SourceRequestProfile
+            {
+                Id = 2,
+                SourceId = 2,
+                IsActive = true,
+                Version = 1,
+                Method = "GET",
+                UrlTemplate = "{BaseUrl}{MangaUrlPart}",
+                TimeoutSeconds = 30,
+                UseCookies = false
+            },
+            new SourceRequestProfile
+            {
+                Id = 3,
+                SourceId = 3,
+                IsActive = true,
+                Version = 1,
+                Method = "GET",
+                UrlTemplate = "{BaseUrl}{MangaUrlPart}&skip={Offset}&take=200&order=desc",
+                TimeoutSeconds = 30,
+                UseCookies = false
+            }
+        );
+
+        builder.Entity<SourceScrapingProfile>().HasData(
+            new SourceScrapingProfile
+            {
+                Id = 1,
+                SourceId = 2,
+                IsActive = true,
+                Version = 1,
+                ChapterNodesXPath = "//a[contains(@href, '/chapter/')]",
+                ChapterUrlXPath = ".",
+                ChapterUrlAttribute = "href",
+                ChapterNumberAttribute = "href",
+                ChapterNumberRegex = "chapter/(\\d+(\\.\\d+)?)",
+                ChapterDateXPath = ".",
+                ChapterDateRegex = "((?:(?:\\d+|a|an|one)\\s+(?:second|sec|minute|min|hour|hr|day|week|wk|month|mo|year|yr)(?:s)?\\s+ago)|today|yesterday|last\\s+(?:week|month|year)|(?:[A-Za-z]{3}\\s+\\d{1,2},\\s+\\d{4}))",
+                DateParseMode = "RelativeOrFormat",
+                DateCulture = "en-US",
+                DateFormatPrimary = "MMM dd, yyyy",
+                RelativeDateRegex = "((?:\\d+|a|an|one))\\s+(second|sec|minute|min|hour|hr|day|week|wk|month|mo|year|yr)s?\\s+ago",
+                IgnoreTextContains1 = "First Chapter",
+                IgnoreTextContains2 = "Latest Chapter",
+                UrlJoinMode = "BaseUrlPrefix",
+                DeduplicationKeyMode = "ChapterNumber",
+                ChapterSortMode = "NumericAscending",
+                ResultLimit = 500
+            }
+        );
+
+        builder.Entity<SourceApiProfile>().HasData(
+            new SourceApiProfile
+            {
+                Id = 1,
+                SourceId = 1,
+                IsActive = true,
+                Version = 1,
+                EndpointTemplate = "{BaseUrl}{MangaUrlPart}/feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=200&offset={Offset}",
+                HttpMethod = "GET",
+                DataRootPath = "data",
+                ChapterNumberPath = "attributes.chapter",
+                ChapterDatePath = "attributes.createdAt",
+                ChapterUrlPath = "id",
+                ResultUrlTemplate = "https://mangadex.org/chapter/{Value}",
+                PaginationMode = "Offset",
+                OffsetParameterName = "offset",
+                ResultLimit = 200
+            },
+            new SourceApiProfile
+            {
+                Id = 2,
+                SourceId = 3,
+                IsActive = true,
+                Version = 1,
+                EndpointTemplate = "{BaseUrl}{MangaUrlPart}&skip={Offset}&take=200&order=desc",
+                HttpMethod = "GET",
+                DataRootPath = "post.chapters",
+                ChapterNumberPath = "number",
+                ChapterDatePath = "createdAt",
+                PaginationMode = "Offset",
+                OffsetParameterName = "skip",
+                LimitParameterName = "take",
+                ResultLimit = 200
+            }
         );
 
         builder.Entity<Manga>().HasData(
@@ -52,7 +190,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         );
         
         builder.Entity<MangaSource>().HasData(
-            new MangaSource { Id = 1, MangaId = 1, SourceId = 6, Url = "01-second-life-ranker", AdditionalInfo = "l_Vjpvkq" },
             new MangaSource { Id = 2, MangaId = 2, SourceId = 1, Url = "fef2e4da-36f9-48e9-8317-2516f4b6ab14" },
             new MangaSource { Id = 3, MangaId = 3, SourceId = 1, Url = "a2320293-f00e-43a0-8d08-1110cf26a894" },
             new MangaSource { Id = 4, MangaId = 4, SourceId = 1, Url = "89ed3ec2-ebe6-4d6b-92eb-d753a8bb365e" },
@@ -62,18 +199,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             new MangaSource { Id = 8, MangaId = 8, SourceId = 2, Url = "/comics/the-max-level-hero-has-returned-5abb513e" },
             new MangaSource { Id = 9, MangaId = 9, SourceId = 2, Url = "/comics/i-obtained-a-mythic-item-5abb513e" },
             new MangaSource { Id = 10, MangaId = 10, SourceId = 2, Url = "/comics/pick-me-up-infinite-gacha-5abb513e" },
-            new MangaSource { Id = 11, MangaId = 11, SourceId = 5, Url = "the-extra-is-too-powerful" },
             new MangaSource { Id = 12, MangaId = 12, SourceId = 2, Url = "/comics/absolute-necromancer-5abb513e" },
             new MangaSource { Id = 13, MangaId = 13, SourceId = 2, Url = "/comics/player-who-cant-level-up-5abb513e" },
             new MangaSource { Id = 14, MangaId = 14, SourceId = 2, Url = "/comics/solo-max-level-newbie-5abb513e" },
             new MangaSource { Id = 15, MangaId = 15, SourceId = 1, Url = "0b171f64-89a5-4c37-b5f9-75cca57e8787" },
             new MangaSource { Id = 16, MangaId = 16, SourceId = 1, Url = "37f5cce0-8070-4ada-96e5-fa24b1bd4ff9" },
             new MangaSource { Id = 17, MangaId = 17, SourceId = 3, Url = "214" },
-            new MangaSource { Id = 18, MangaId = 18, SourceId = 4, Url = "81512-shangri-la-frontier-official" },
-            new MangaSource { Id = 19, MangaId = 19, SourceId = 4, Url = "83510-one-piece-official" },
-            new MangaSource { Id = 20, MangaId = 20, SourceId = 5, Url = "the-lone-necromancer" },
-            new MangaSource { Id = 21, MangaId = 21, SourceId = 1, Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e" },
-            new MangaSource { Id = 22, MangaId = 22, SourceId = 6, Url = "00-player-who-returned-10-000-years-later", AdditionalInfo = "54Zwh6iY" }
+            new MangaSource { Id = 21, MangaId = 21, SourceId = 1, Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e" }
         );
     }
 }

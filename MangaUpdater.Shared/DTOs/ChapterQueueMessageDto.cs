@@ -1,5 +1,11 @@
-using MangaUpdater.Shared.Enums;
-
 namespace MangaUpdater.Shared.DTOs;
 
-public record ChapterQueueMessageDto(string BaseUrlPart, string MangaUrlPart, string? AdditionalInfo, int MangaId, string MangaName, SourcesEnum Source, string LastChapterNumber);
+public record ChapterQueueMessageDto(
+	int SourceId,
+	string? SourceSlug,
+	string SourceBaseUrl,
+	string MangaPath,
+	string? AdditionalInfo,
+	int MangaId,
+	string MangaName,
+	string LastChapterNumber);

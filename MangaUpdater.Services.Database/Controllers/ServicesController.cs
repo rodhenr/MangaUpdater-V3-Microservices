@@ -1,5 +1,4 @@
 using MangaUpdater.Services.Database.Feature.Services;
-using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MangaUpdater.Services.Database.Controllers;
 
-[Authorize(Roles = "admin")]
 public class ServicesController : BaseController
 {
     private readonly ISender _sender;
@@ -20,30 +18,30 @@ public class ServicesController : BaseController
     [HttpGet("get-chapters/sources/{sourceId:int}")]
     public async Task<SourceDetails> GetStatus(int sourceId)
     {
-        return await _sender.Send(new GetGetChaptersServiceStatusQuery((SourcesEnum)sourceId));
+        return await _sender.Send(new GetGetChaptersServiceStatusQuery(sourceId));
     }
     
     [HttpPost("get-chapters/sources/{sourceId:int}/pause")]
     public async Task Pause(int sourceId)
     {
-        await _sender.Send(new PauseGetChaptersServiceCommand((SourcesEnum)sourceId));
+        await _sender.Send(new PauseGetChaptersServiceCommand(sourceId));
     }
 
     [HttpPost("get-chapters/sources/{sourceId:int}/resume")]
     public async Task Resume(int sourceId)
     {
-        await _sender.Send(new ResumeGetChaptersServiceCommand((SourcesEnum)sourceId));
+        await _sender.Send(new ResumeGetChaptersServiceCommand(sourceId));
     }
 
     [HttpPost("get-chapters/sources/{sourceId:int}/trigger")]
     public async Task TriggerNow(int sourceId)
     {
-        await _sender.Send(new TriggerGetChapterServiceCommand((SourcesEnum)sourceId));
+        await _sender.Send(new TriggerGetChapterServiceCommand(sourceId));
     }
 
     [HttpPost("get-chapters/sources/{sourceId:int}/delay")]
     public async Task SetDelay(int sourceId, [FromBody] ChapterServiceSetDelayRequest minutes)
     {
-        await _sender.Send(new SetGetChaptersServiceDelayCommand((SourcesEnum)sourceId, minutes));
+        await _sender.Send(new SetGetChaptersServiceDelayCommand(sourceId, minutes));
     }
 }

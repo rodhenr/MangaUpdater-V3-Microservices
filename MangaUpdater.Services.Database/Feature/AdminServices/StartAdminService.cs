@@ -1,4 +1,3 @@
-using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MangaUpdater.Shared.Exceptions;
 using MediatR;
@@ -18,23 +17,10 @@ public class StartAdminServiceHandler : IRequestHandler<StartAdminServiceCommand
 
     public Task Handle(StartAdminServiceCommand request, CancellationToken cancellationToken)
     {
-        if (!TryResolveSourceFromName(request.Name, out var source, out var message))
-            throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest, message);
+        if (!_manager.TryResolveSourceId(request.Name, out var sourceId))
+            throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest, "Unknown service name");
 
-        _manager.ResumeBySource(source);
+        _manager.ResumeBySource(sourceId);
         return Task.CompletedTask;
-    }
-
-    private static bool TryResolveSourceFromName(string name, out SourcesEnum source, out string error)
-    {
-        source = default;
-        error = string.Empty;
-        var candidate = name.Contains('.') ? name.Split('.').Last() : name;
-        if (!Enum.TryParse<SourcesEnum>(candidate, ignoreCase: true, out source))
-        {
-            error = "Unknown service name";
-            return false;
-        }
-        return true;
     }
 }

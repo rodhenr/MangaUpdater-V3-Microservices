@@ -1,5 +1,6 @@
 using System.Text.Json;
 using MangaUpdater.Services.Database.Feature.MangaSources;
+using MangaUpdater.Services.Database.Feature.Sources;
 using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MediatR;
@@ -15,37 +16,96 @@ namespace MangaUpdater.Services.Database.Services;
 /// </summary>
 public class ChapterTaskDispatcherService : BackgroundService
 {
-    private readonly SourcesEnum _source;
     private readonly IRabbitMqClient _rabbitMqClient;
     private readonly IServiceProvider _serviceProvider;
     private readonly IAppLogger _appLogger;
     private readonly IChapterTaskDispatchManager _manager;
-    private readonly string _queueName;
+    private readonly Dictionary<int, SourceWorkerRegistration> _workers = new();
 
     public ChapterTaskDispatcherService(
-        SourcesEnum source,
         IRabbitMqClient rabbitMqClient,
         IServiceProvider serviceProvider,
         IAppLogger appLogger,
         IChapterTaskDispatchManager manager)
     {
-        _source = source;
         _rabbitMqClient = rabbitMqClient;
         _serviceProvider = serviceProvider;
         _appLogger = appLogger;
         _manager = manager;
-        _queueName = $"get-chapters-{_source}";
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _appLogger.LogInformation("Database", $"Chapters dispatcher for '{_source}' started.");
+        _appLogger.LogInformation("Database", "Dynamic chapter dispatcher started.");
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (_manager.GetStateBySource(_source) == ServicesStateEnum.Paused)
+            try
             {
-                await _manager.WaitForNextExecutionAsync(_source, stoppingToken);
+                using var scope = _serviceProvider.CreateScope();
+                var sender = scope.ServiceProvider.GetRequiredService<ISender>();
+                var activeSources = await sender.Send(new GetActiveDispatchSourcesQuery(), stoppingToken);
+                await ReconcileWorkersAsync(activeSources, stoppingToken);
+            }
+            catch (Exception ex)
+            {
+                _appLogger.LogError("Database", "Error reconciling dynamic chapter dispatch workers.", ex);
+            }
+
+            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+        }
+
+        await StopWorkersAsync();
+        _appLogger.LogInformation("Database", "Dynamic chapter dispatcher stopping...");
+    }
+
+    private Task ReconcileWorkersAsync(IReadOnlyCollection<ActiveDispatchSourceDto> activeSources,
+        CancellationToken stoppingToken)
+    {
+        var activeSourceIds = activeSources.Select(source => source.SourceId).ToHashSet();
+
+        foreach (var activeSource in activeSources)
+        {
+            _manager.RegisterSource(activeSource.SourceId, activeSource.SourceName, activeSource.QueueName);
+
+            if (_workers.TryGetValue(activeSource.SourceId, out var existingWorker))
+            {
+                if (existingWorker.SourceName == activeSource.SourceName
+                    && existingWorker.QueueName == activeSource.QueueName
+                    && !existingWorker.ExecutionTask.IsCompleted)
+                    continue;
+
+                existingWorker.CancellationTokenSource.Cancel();
+                _workers.Remove(activeSource.SourceId);
+            }
+
+            var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+            var executionTask = RunSourceLoopAsync(activeSource, linkedCancellation.Token);
+            _workers[activeSource.SourceId] = new SourceWorkerRegistration(activeSource.SourceName,
+                activeSource.QueueName, linkedCancellation, executionTask);
+        }
+
+        foreach (var removedSourceId in _workers.Keys.Where(sourceId => !activeSourceIds.Contains(sourceId)).ToList())
+        {
+            var removedWorker = _workers[removedSourceId];
+            removedWorker.CancellationTokenSource.Cancel();
+            _workers.Remove(removedSourceId);
+            _manager.RemoveSource(removedSourceId);
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task RunSourceLoopAsync(ActiveDispatchSourceDto source, CancellationToken stoppingToken)
+    {
+        _appLogger.LogInformation("Database", "Chapters dispatcher for '{0}' ({1}) started.", source.SourceName,
+            source.SourceId);
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            if (_manager.GetStateBySource(source.SourceId) == ServicesStateEnum.Paused)
+            {
+                await _manager.WaitForNextExecutionAsync(source.SourceId, stoppingToken);
                 continue;
             }
 
@@ -53,31 +113,48 @@ public class ChapterTaskDispatcherService : BackgroundService
             {
                 using var scope = _serviceProvider.CreateScope();
                 var sender = scope.ServiceProvider.GetRequiredService<ISender>();
-                
-                var data = await sender.Send(new GetMangaSourcesToFetchQuery(_source), stoppingToken);
+                var data = await sender.Send(new GetMangaSourcesToFetchQuery(source.SourceId), stoppingToken);
 
-                _appLogger.LogInformation("Database", $"[{_source}] {data.Count} mangas to fetch.");
+                _appLogger.LogInformation("Database", "[{0}] {1} mangas to fetch.", source.SourceName, data.Count);
 
                 var tasks = data.Select(async mangaSource =>
                 {
-                    var hasMessages = await _rabbitMqClient.HasMessagesInQueueAsync(_queueName, stoppingToken);
+                    var hasMessages = await _rabbitMqClient.HasMessagesInQueueAsync(source.QueueName, stoppingToken);
                     if (hasMessages) return;
 
                     var payload = JsonSerializer.Serialize(mangaSource);
-                    await _rabbitMqClient.PublishAsync(_queueName, payload, stoppingToken);
-                    _appLogger.LogInformation("Database", $"[{_source}] Fetch request sent for '{mangaSource.MangaName}'.");
+                    await _rabbitMqClient.PublishAsync(source.QueueName, payload, stoppingToken);
+                    _appLogger.LogInformation("Database", "[{0}] Fetch request sent for '{1}'.", source.SourceName,
+                        mangaSource.MangaName);
                 });
 
                 await Task.WhenAll(tasks);
             }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
             catch (Exception ex)
             {
-                _appLogger.LogError("Database", $"[{_source}] Error during execution: {ex.Message}", ex);
+                _appLogger.LogError("Database",
+                    $"[{source.SourceName}] Error during execution for source id '{source.SourceId}'.", ex);
             }
 
-            await _manager.WaitForNextExecutionAsync(_source, stoppingToken);
+            await _manager.WaitForNextExecutionAsync(source.SourceId, stoppingToken);
         }
-
-        _appLogger.LogInformation("Database", $"Chapters dispatcher for {_source} stopping...");
     }
+
+    private async Task StopWorkersAsync()
+    {
+        foreach (var worker in _workers.Values)
+            await worker.CancellationTokenSource.CancelAsync();
+
+        if (_workers.Count > 0)
+            await Task.WhenAll(_workers.Values.Select(worker => worker.ExecutionTask));
+
+        _workers.Clear();
+    }
+
+    private sealed record SourceWorkerRegistration(string SourceName, string QueueName,
+        CancellationTokenSource CancellationTokenSource, Task ExecutionTask);
 }

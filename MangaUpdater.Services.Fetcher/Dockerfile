@@ -15,15 +15,6 @@ RUN dotnet publish "MangaUpdater.Services.Fetcher.csproj" -c Release -o /app/pub
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
-# Install Chromium and dependencies
-RUN apt-get update && apt-get install -y \
-    chromium \
-    chromium-driver \
-    && rm -rf /var/lib/apt/lists/* 
-
-# Environment variable for Chromium binary location (useful for Selenium/automation tools)
-ENV CHROME_BIN=/usr/bin/chromium
-
 COPY --from=build /app/publish .
 
 EXPOSE 8080

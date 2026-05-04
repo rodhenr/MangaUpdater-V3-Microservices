@@ -1,6 +1,11 @@
 using MangaUpdater.Services.Fetcher;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuredUrls = builder.Configuration[WebHostDefaults.ServerUrlsKey];
+var hasHttpsBinding = configuredUrls?
+    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .Any(url => url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) == true;
 
 // Built-in services
 builder.Services.AddControllers();
@@ -25,7 +30,10 @@ if (app.Environment.IsDevelopment())
 
 // Built-in
 app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-app.UseHttpsRedirection();
+if (hasHttpsBinding)
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthorization();
 
 // Correlation middleware

@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using RabbitMQ.Client;
 
 namespace MangaUpdater.Services.Fetcher.Controllers;
 

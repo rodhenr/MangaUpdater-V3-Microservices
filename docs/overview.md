@@ -1,78 +1,79 @@
 # Overview
-- **Purpose:** MangaUpdater V3 — a multi-project system to fetch, persist, and serve manga metadata and chapters; connectors to external APIs (e.g., AniList) and internal workers for fetching and processing.
-- **Type:** Microservices-oriented solution composed of multiple specialized projects.
 
-# Structure
-- **Main folders / projects at repository root:**
-	- MangaUpdater.Services.AnilistConnector
-	- MangaUpdater.Services.API
-	- MangaUpdater.Services.Database
-	- MangaUpdater.Services.Fetcher
-	- MangaUpdater.Service.Messaging
-	- MangaUpdater.Services.Logging
-	- MangaUpdater.Shared
-- Each service has a `Program.cs`, `Controllers/`, `Features/`, and `Dockerfile` (where applicable).
+MangaUpdater V3 is a microservices-oriented solution that fetches manga chapters from external sources, stores normalized data in Postgres, and exposes that data through service APIs. The fetch pipeline is now source-id and database driven: source runtime metadata, request rules, and parsing profiles are stored in the database instead of being selected from source-specific enums.
 
-# Services / Modules
-### **MangaUpdater.Services.AnilistConnector**
-  - Purpose: lightweight connector to fetch a user's manga collection from Anilist.
-  - Entry point: MangaUpdater.Services.AnilistConnector/Program.cs
-  - Main controllers: Controllers/UserController.cs
-  - Required env vars: none (uses default appsettings)
+# Repository Structure
 
-### **MangaUpdater.Services.API**
-  - Purpose: public API aggregating information (user chapters, logs).
-  - Entry point: MangaUpdater.Services.API/Program.cs
-  - Main controllers: Controllers/InfoController.cs, Controllers/LogController.cs
-  - Required env vars:
-    - `Database:BaseUrl` (optional, default: http://localhost:5002/)
+- MangaUpdater.Services.Database: primary application data service, source configuration CRUD, scheduling control, and validation endpoints.
+- MangaUpdater.Services.Fetcher: runtime scraper worker that resolves source definitions from the database and executes the configured engine.
+- MangaUpdater.Services.API: public API facade over application data.
+- MangaUpdater.Services.AnilistConnector: AniList integration for user manga collection import.
+- MangaUpdater.Service.Messaging: RabbitMQ client wrapper shared by services.
+- MangaUpdater.Services.Logging: shared application logger.
+- MangaUpdater.Shared: DTOs, request models, shared enums, helpers, and runtime contracts.
 
-### **MangaUpdater.Services.Database**
-  - Purpose: primary application database and data access layer.
-  - Entry point: MangaUpdater.Services.Database/Program.cs
-  - Main controllers: Controllers/MangaController.cs, ChaptersController.cs, LogController.cs, etc.
-  - Required env vars:
-    - `ConnectionStrings:DefaultConnection` (Postgres connection string)
-    - `RabbitMqSettings:Hostname`, `RabbitMqSettings:Username`, `RabbitMqSettings:Password`, `RabbitMqSettings:Port`
+# Runtime Architecture
 
-### **MangaUpdater.Services.Fetcher**
-  - Purpose: fetcher/scraper service that retrieves chapters from sources and enqueues work.
-  - Entry point: MangaUpdater.Services.Fetcher/Program.cs
-  - Main controllers: Controllers/FetcherController.cs, Controllers/ServicesController.cs
-  - Required env vars:
-    - `ConnectionStrings:DefaultConnection` (used by logging / services)
-    - `RabbitMqSettings:Hostname`, `RabbitMqSettings:Username`, `RabbitMqSettings:Password`, `RabbitMqSettings:Port`
-    - Note: Puppeteer/Chrome executable is referenced (Dev only: ensure Chrome is available at the configured path)
+- Source identity is carried by `SourceId` plus optional `SourceSlug` in queue messages.
+- The Database service stores source runtime metadata in `Source`, `SourceRequestProfile`, `SourceApiProfile`, and `SourceScrapingProfile`.
+- The Fetcher resolves one consolidated `SourceRuntimeDefinition` from the database and caches it for 5 minutes.
+- `HtmlXPath` and `JsonApi` are the generic engines currently used for migrated sources.
+- `Custom` remains the escape hatch for sources that still require dedicated code, such as the browser-driven Comick path.
+- Queue topology is also database driven. A source can provide an explicit `QueueName`; otherwise the services fall back to `get-chapters-{slug}` or `get-chapters-{sourceId}`.
 
-### **MangaUpdater.Service.Messaging**
-  - Purpose: RabbitMQ client implementation used by other services.
-  - Files: Services/RabbitMqClient.cs
-  - Required env vars: none by itself; consumers should provide `RabbitMqSettings` in their appsettings.
+# Services
 
-### **MangaUpdater.Services.Logging**
-  - Purpose: AppLogger helper used by services to log to the database/storage.
-  - Files: AppLogger.cs
-  - Required env vars:
-    - `ConnectionStrings:DefaultConnection` (used by AppLogger)
+## MangaUpdater.Services.Database
 
-# Data Layer
-- **Database usage**: a dedicated Database project with `AppDbContext` and `Migrations` indicates use of a relational DB.
-- **ORM**: Entity Framework Core is used (inferred from `DbContext` and `Migrations` presence).
+- Purpose: EF Core data access, source/admin APIs, dynamic source scheduling, and validation tooling.
+- Entry point: `MangaUpdater.Services.Database/Program.cs`
+- Main source endpoints: `api/source`, `api/source/{sourceId}/request-profiles`, `api/source/{sourceId}/api-profiles`, `api/source/{sourceId}/scraping-profiles`, `api/source/{sourceId}/validate-profile`
+- Required configuration:
+  - `ConnectionStrings:DefaultConnection`
+  - `RabbitMqSettings:Hostname`
+  - `RabbitMqSettings:Username`
+  - `RabbitMqSettings:Password`
+  - `RabbitMqSettings:Port`
 
-# Dependencies
-- **External APIs:** AniList (via `AnilistConnector`), other external sources implied by fetcher modules (specific providers: unknown).
-- **Internal dependencies:** `MangaUpdater.Shared` used across services; messaging via RabbitMQ client; Docker/Docker Compose for service orchestration.
+## MangaUpdater.Services.Fetcher
+
+- Purpose: consume chapter fetch jobs, resolve active source definitions from the database, execute engines, and publish normalized chapter results.
+- Entry point: `MangaUpdater.Services.Fetcher/Program.cs`
+- Main endpoints: `api/fetcher`, `api/services/queue`, `api/services/queue/pause`, `api/services/queue/resume`
+- Required configuration:
+  - `ConnectionStrings:DefaultConnection`
+  - `RabbitMqSettings:Hostname`
+  - `RabbitMqSettings:Username`
+  - `RabbitMqSettings:Password`
+  - `RabbitMqSettings:Port`
+  - Optional browser config for custom sources: `Puppeteer:ExecutablePath` or `CHROME_BIN`
+
+## MangaUpdater.Services.API
+
+- Purpose: public API over manga, chapter, and log data.
+- Entry point: `MangaUpdater.Services.API/Program.cs`
+- Required configuration:
+  - `Microservices:Database`
+
+## MangaUpdater.Services.AnilistConnector
+
+- Purpose: AniList collection import.
+- Entry point: `MangaUpdater.Services.AnilistConnector/Program.cs`
+
+## Shared Support Projects
+
+- MangaUpdater.Service.Messaging: RabbitMQ infrastructure.
+- MangaUpdater.Services.Logging: application logging implementation.
+- MangaUpdater.Shared: shared contracts used across services.
 
 # Conventions
-- **Naming:** project names `MangaUpdater.Services.*`; folders `Controllers`, `Features`, `Services`, `Database`, `DTOs`.
-- **Architectural patterns:** microservices with layered organization (Controllers → Services → Database); feature folders for domain separation.
-- **Hosting:** each service uses `Program.cs` (host entry); controllers indicate HTTP APIs (MVC-style controllers or minimal API hosting with controllers).
 
-# Observations
-- **Missing patterns:** no test projects visible in repository root (tests: unknown).
-- **Inconsistencies:** routes and API surface details are not centralized (endpoint shapes: unknown).
-- **Technical debt / notes:**
-	- Documentation per-service is limited in-code (detailed README or API spec per service: unknown).
-	- Some folders show elided content (`...`), so full coverage of files is not available from listing.
-	- No visible CI/test configuration in the listed files (CI: unknown).
+- Business logic lives in `Features` or services. Controllers remain thin and delegate to MediatR handlers or orchestrators.
+- Source/profile versioning is activation based: one active version per profile type per source.
+- The Fetcher prefers consistency with the configured database profile over hardcoded source branches.
+
+# Related Docs
+
+- `docs/source-operations.md`: source onboarding, validation, rollback, disable flows, and cache behavior.
+- `MangaUpdater.Services.Fetcher/README.md`: engine semantics, setup steps, and generic HTML examples.
 

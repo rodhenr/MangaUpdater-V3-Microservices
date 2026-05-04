@@ -14,7 +14,8 @@ Small set of microservices and helpers to fetch, normalize and store manga chapt
 
 **Quick links**
 
-- Services overview: [docs/services-overview.md](docs/services-overview.md#L1)
+- Services overview: [docs/overview.md](docs/overview.md#L1)
+- Source operations: [docs/source-operations.md](docs/source-operations.md#L1)
 - Project solution: `MangaUpdater_V3.sln`
 - Docker compose: `docker-compose.yml`
 
@@ -37,7 +38,8 @@ Or start the recommended local stack with Docker (if configured):
 docker-compose up -d
 ```
 
-Check `docs/services-overview.md` for required environment variables and per-service notes.
+Check `docs/overview.md` for required environment variables and service boundaries.
+Check `docs/source-operations.md` for source onboarding, validation, rollback, and cache behavior.
 
 ## Contributing
 

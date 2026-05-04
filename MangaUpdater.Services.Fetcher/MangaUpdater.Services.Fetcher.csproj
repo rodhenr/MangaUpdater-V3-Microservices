@@ -10,15 +10,28 @@
         <PackageReference Include="AutoRegisterInject" Version="1.4.1" />
         <PackageReference Include="HtmlAgilityPack" Version="1.12.4" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.6" />
-        <PackageReference Include="PuppeteerSharp" Version="24.40.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.6" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\MangaUpdater.Service.Messaging\MangaUpdater.Service.Messaging.csproj" />
+            <ProjectReference Include="..\MangaUpdater.Services.Database\MangaUpdater.Services.Database.csproj">
+                <ExcludeAssets>contentFiles</ExcludeAssets>
+                <PrivateAssets>contentFiles</PrivateAssets>
+            </ProjectReference>
       <ProjectReference Include="..\MangaUpdater.Services.Logging\MangaUpdater.Services.Logging.csproj" />
       <ProjectReference Include="..\MangaUpdater.Shared\MangaUpdater.Shared.csproj" />
     </ItemGroup>
+
+        <Target Name="FilterReferencedProjectAppSettings" AfterTargets="ComputeResolvedFilesToPublishList">
+            <ItemGroup>
+                <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+                                                             Condition="'%(ResolvedFileToPublish.RelativePath)' == 'appsettings.json' and '%(ResolvedFileToPublish.MSBuildSourceProjectFile)' != '$(MSBuildProjectFullPath)'" />
+                <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
+                                                             Condition="'%(ResolvedFileToPublish.RelativePath)' == 'appsettings.Development.json' and '%(ResolvedFileToPublish.MSBuildSourceProjectFile)' != '$(MSBuildProjectFullPath)'" />
+            </ItemGroup>
+        </Target>
 
 </Project>

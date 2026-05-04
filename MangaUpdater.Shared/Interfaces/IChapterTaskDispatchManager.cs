@@ -5,15 +5,19 @@ namespace MangaUpdater.Shared.Interfaces;
 
 public interface IChapterTaskDispatchManager
 {
-    SourceDetails GetExecutionDetails(SourcesEnum source);
-    ServicesStateEnum GetStateBySource(SourcesEnum source);
-    void PauseBySource(SourcesEnum source);
-    void ResumeBySource(SourcesEnum source);
-    void TriggerNowBySource(SourcesEnum source);
+    IReadOnlyCollection<SourceDetails> GetAllExecutionDetails();
+    SourceDetails GetExecutionDetails(int sourceId);
+    ServicesStateEnum GetStateBySource(int sourceId);
+    void PauseBySource(int sourceId);
+    void ResumeBySource(int sourceId);
+    void TriggerNowBySource(int sourceId);
 
-    TimeSpan GetDelayBySource(SourcesEnum source);
-    void SetDelayBySource(SourcesEnum source, TimeSpan delay);
-    DateTime? GetNextExecutionUtcBySource(SourcesEnum source);
+    TimeSpan GetDelayBySource(int sourceId);
+    void SetDelayBySource(int sourceId, TimeSpan delay);
+    DateTime? GetNextExecutionUtcBySource(int sourceId);
+    void RegisterSource(int sourceId, string sourceName, string queueName);
+    void RemoveSource(int sourceId);
+    bool TryResolveSourceId(string sourceIdentifier, out int sourceId);
 
-    Task WaitForNextExecutionAsync(SourcesEnum source, CancellationToken cancellationToken);
+    Task WaitForNextExecutionAsync(int sourceId, CancellationToken cancellationToken);
 }

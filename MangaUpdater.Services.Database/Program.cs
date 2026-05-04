@@ -2,9 +2,14 @@ using System.Text;
 using MangaUpdater.Services.Database;
 using MangaUpdater.Shared.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuredUrls = builder.Configuration[WebHostDefaults.ServerUrlsKey];
+var hasHttpsBinding = configuredUrls?
+    .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+    .Any(url => url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) == true;
 
 // Built-in services
 builder.Services.AddControllers();
@@ -52,7 +57,10 @@ if (app.Environment.IsDevelopment())
 
 // Built-in
 app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-app.UseHttpsRedirection();
+if (hasHttpsBinding)
+{
+    app.UseHttpsRedirection();
+}
 
 // Add authentication/authorization middleware
 app.UseAuthentication();

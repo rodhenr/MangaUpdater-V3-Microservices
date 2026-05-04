@@ -409,15 +409,6 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.HasData(
                         new
                         {
-                            MangaId = 1,
-                            SourceId = 6,
-                            AdditionalInfo = "l_Vjpvkq",
-                            Id = 1,
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "01-second-life-ranker"
-                        },
-                        new
-                        {
                             MangaId = 2,
                             SourceId = 1,
                             Id = 2,
@@ -490,14 +481,6 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         },
                         new
                         {
-                            MangaId = 11,
-                            SourceId = 5,
-                            Id = 11,
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "the-extra-is-too-powerful"
-                        },
-                        new
-                        {
                             MangaId = 12,
                             SourceId = 2,
                             Id = 12,
@@ -546,44 +529,11 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         },
                         new
                         {
-                            MangaId = 18,
-                            SourceId = 4,
-                            Id = 18,
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "81512-shangri-la-frontier-official"
-                        },
-                        new
-                        {
-                            MangaId = 19,
-                            SourceId = 4,
-                            Id = 19,
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "83510-one-piece-official"
-                        },
-                        new
-                        {
-                            MangaId = 20,
-                            SourceId = 5,
-                            Id = 20,
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "the-lone-necromancer"
-                        },
-                        new
-                        {
                             MangaId = 21,
                             SourceId = 1,
                             Id = 21,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Url = "6e44705b-9f80-42f6-9ebb-1141fbe8320e"
-                        },
-                        new
-                        {
-                            MangaId = 22,
-                            SourceId = 6,
-                            AdditionalInfo = "54Zwh6iY",
-                            Id = 22,
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Url = "00-player-who-returned-10-000-years-later"
                         });
                 });
 
@@ -600,10 +550,54 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("DefaultUserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("EngineType")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("HtmlXPath");
+
+                    b.Property<bool>("IsEnabled")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<string>("QueueName")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
+
+                    b.Property<int?>("RateLimitMilliseconds")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RequestMode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasDefaultValue("HttpGet");
+
+                    b.Property<bool>("RequiresBrowser")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Slug")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("SupportsPagination")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
@@ -612,6 +606,9 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
                     b.ToTable("Sources");
 
                     b.HasData(
@@ -619,43 +616,423 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                         {
                             Id = 1,
                             BaseUrl = "https://api.mangadex.org/manga/",
+                            DefaultUserAgent = "MangaUpdater/1.0",
+                            EngineType = "JsonApi",
+                            IsEnabled = true,
                             Name = "MangaDex",
+                            QueueName = "get-chapters-Mangadex",
+                            RequestMode = "HttpGet",
+                            RequiresBrowser = false,
+                            Slug = "mangadex",
+                            SupportsPagination = true,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 2,
                             BaseUrl = "https://asurascans.com",
+                            EngineType = "HtmlXPath",
+                            IsEnabled = true,
                             Name = "AsuraScans",
+                            QueueName = "get-chapters-AsuraScans",
+                            RequestMode = "HttpGet",
+                            RequiresBrowser = false,
+                            Slug = "asurascans",
+                            SupportsPagination = false,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 3,
                             BaseUrl = "https://vortexscans.org/api/chapters?postId=",
+                            EngineType = "JsonApi",
+                            IsEnabled = true,
                             Name = "VortexScans",
+                            QueueName = "get-chapters-VortexScans",
+                            RequestMode = "HttpGet",
+                            RequiresBrowser = false,
+                            Slug = "vortexscans",
+                            SupportsPagination = true,
                             Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.SourceApiProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ChapterDatePath")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ChapterNumberPath")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ChapterUrlPath")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("DataRootPath")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("EndpointTemplate")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("HttpMethod")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasDefaultValue("GET");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("LimitParameterName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("NextPagePath")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("OffsetParameterName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("PaginationMode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("ResultLimit")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ResultUrlTemplate")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceId", "Version")
+                        .IsUnique();
+
+                    b.ToTable("SourceApiProfiles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ChapterDatePath = "attributes.createdAt",
+                            ChapterNumberPath = "attributes.chapter",
+                            ChapterUrlPath = "id",
+                            DataRootPath = "data",
+                            EndpointTemplate = "{BaseUrl}{MangaUrlPart}/feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=200&offset={Offset}",
+                            HttpMethod = "GET",
+                            IsActive = true,
+                            OffsetParameterName = "offset",
+                            PaginationMode = "Offset",
+                            ResultLimit = 200,
+                            ResultUrlTemplate = "https://mangadex.org/chapter/{Value}",
+                            SourceId = 1,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Version = 1
                         },
                         new
                         {
-                            Id = 4,
-                            BaseUrl = "https://xbato.com/title/",
-                            Name = "Batoto",
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Id = 2,
+                            ChapterDatePath = "createdAt",
+                            ChapterNumberPath = "number",
+                            DataRootPath = "post.chapters",
+                            EndpointTemplate = "{BaseUrl}{MangaUrlPart}&skip={Offset}&take=200&order=desc",
+                            HttpMethod = "GET",
+                            IsActive = true,
+                            LimitParameterName = "take",
+                            OffsetParameterName = "skip",
+                            PaginationMode = "Offset",
+                            ResultLimit = 200,
+                            SourceId = 3,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Version = 1
+                        });
+                });
+
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.SourceRequestProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcceptLanguage")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("HeadersJson")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasDefaultValue("GET");
+
+                    b.Property<string>("Referrer")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("TimeoutSeconds")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<string>("UrlTemplate")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("UseCookies")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceId", "Version")
+                        .IsUnique();
+
+                    b.ToTable("SourceRequestProfiles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AcceptLanguage = "en-US",
+                            HeadersJson = "{\"User-Agent\":\"MangaUpdater/1.0\"}",
+                            IsActive = true,
+                            Method = "GET",
+                            SourceId = 1,
+                            TimeoutSeconds = 30,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UrlTemplate = "{BaseUrl}{MangaUrlPart}/feed?translatedLanguage[]=en&limit=199&order[chapter]=asc&limit=200&offset={Offset}",
+                            UseCookies = false,
+                            Version = 1
                         },
                         new
                         {
-                            Id = 5,
-                            BaseUrl = "https://www.snowmtl.ru/comics/",
-                            Name = "SnowMachine",
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Id = 2,
+                            IsActive = true,
+                            Method = "GET",
+                            SourceId = 2,
+                            TimeoutSeconds = 30,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UrlTemplate = "{BaseUrl}{MangaUrlPart}",
+                            UseCookies = false,
+                            Version = 1
                         },
                         new
                         {
-                            Id = 6,
-                            BaseUrl = "https://api.comick.dev/comic/",
-                            Name = "Comick",
-                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            Id = 3,
+                            IsActive = true,
+                            Method = "GET",
+                            SourceId = 3,
+                            TimeoutSeconds = 30,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UrlTemplate = "{BaseUrl}{MangaUrlPart}&skip={Offset}&take=200&order=desc",
+                            UseCookies = false,
+                            Version = 1
+                        });
+                });
+
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.SourceScrapingProfile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ChapterDateAttribute")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ChapterDateRegex")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ChapterDateXPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ChapterNodesXPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ChapterNumberAttribute")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ChapterNumberRegex")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ChapterNumberXPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ChapterSortMode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ChapterUrlAttribute")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ChapterUrlXPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("DateCulture")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("DateFormatPrimary")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("DateFormatSecondary")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("DateParseMode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("DeduplicationKeyMode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("IgnoreTextContains1")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("IgnoreTextContains2")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("IgnoreTextContains3")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("PaginationNextPageXPath")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("PaginationUrlTemplate")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("RelativeDateRegex")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int?>("ResultLimit")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SourceId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("timezone('utc', now())");
+
+                    b.Property<string>("UrlJoinMode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("UrlPrefix")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("Version")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SourceId", "Version")
+                        .IsUnique();
+
+                    b.ToTable("SourceScrapingProfiles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ChapterDateRegex = "((?:(?:\\d+|a|an|one)\\s+(?:second|sec|minute|min|hour|hr|day|week|wk|month|mo|year|yr)(?:s)?\\s+ago)|today|yesterday|last\\s+(?:week|month|year)|(?:[A-Za-z]{3}\\s+\\d{1,2},\\s+\\d{4}))",
+                            ChapterDateXPath = ".",
+                            ChapterNodesXPath = "//a[contains(@href, '/chapter/')]",
+                            ChapterNumberAttribute = "href",
+                            ChapterNumberRegex = "chapter/(\\d+(\\.\\d+)?)",
+                            ChapterSortMode = "NumericAscending",
+                            ChapterUrlAttribute = "href",
+                            ChapterUrlXPath = ".",
+                            DateCulture = "en-US",
+                            DateFormatPrimary = "MMM dd, yyyy",
+                            DateParseMode = "RelativeOrFormat",
+                            DeduplicationKeyMode = "ChapterNumber",
+                            IgnoreTextContains1 = "First Chapter",
+                            IgnoreTextContains2 = "Latest Chapter",
+                            IsActive = true,
+                            RelativeDateRegex = "((?:\\d+|a|an|one))\\s+(second|sec|minute|min|hour|hr|day|week|wk|month|mo|year|yr)s?\\s+ago",
+                            ResultLimit = 500,
+                            SourceId = 2,
+                            Timestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UrlJoinMode = "BaseUrlPrefix",
+                            Version = 1
                         });
                 });
 
@@ -735,6 +1112,39 @@ namespace MangaUpdater.Services.Database.Database.Migrations
                     b.Navigation("Source");
                 });
 
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.SourceApiProfile", b =>
+                {
+                    b.HasOne("MangaUpdater.Services.Database.Entities.Source", "Source")
+                        .WithMany("ApiProfiles")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.SourceRequestProfile", b =>
+                {
+                    b.HasOne("MangaUpdater.Services.Database.Entities.Source", "Source")
+                        .WithMany("RequestProfiles")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("MangaUpdater.Services.Database.Entities.SourceScrapingProfile", b =>
+                {
+                    b.HasOne("MangaUpdater.Services.Database.Entities.Source", "Source")
+                        .WithMany("ScrapingProfiles")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Source");
+                });
+
             modelBuilder.Entity("MangaUpdater.Services.Database.Entities.Manga", b =>
                 {
                     b.Navigation("Chapters");
@@ -744,9 +1154,15 @@ namespace MangaUpdater.Services.Database.Database.Migrations
 
             modelBuilder.Entity("MangaUpdater.Services.Database.Entities.Source", b =>
                 {
+                    b.Navigation("ApiProfiles");
+
                     b.Navigation("Chapters");
 
                     b.Navigation("MangaSources");
+
+                    b.Navigation("RequestProfiles");
+
+                    b.Navigation("ScrapingProfiles");
                 });
 #pragma warning restore 612, 618
         }

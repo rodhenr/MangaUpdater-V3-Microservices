@@ -1,4 +1,6 @@
 using System.Text.Json;
+using MangaUpdater.Services.Database.Database;
+using Microsoft.EntityFrameworkCore;
 using MangaUpdater.Services.Fetcher.Models;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Enums;
@@ -12,6 +14,7 @@ public class FetchChaptersService : BackgroundService
     private readonly IRabbitMqClient _rabbitMqClient;
     private readonly IAppLogger _appLogger;
     private readonly IFetchChaptersManager _manager;
+    private readonly Dictionary<int, QueueConsumerRegistration> _consumers = new();
 
     public FetchChaptersService(IRabbitMqClient rabbitMqClient, IServiceProvider serviceProvider, 
         IAppLogger appLogger, IFetchChaptersManager manager)
@@ -26,20 +29,66 @@ public class FetchChaptersService : BackgroundService
     {
         try
         {
-            var tasks = Enum.GetValues<SourcesEnum>().Select(source =>
+            while (!stoppingToken.IsCancellationRequested)
             {
-                var queueName = $"get-chapters-{source}";
-                _manager.TryAddQueue(queueName);
-                
-                return _rabbitMqClient.ConsumeAsync(queueName, message =>
-                    HandleMessageAsync(message, queueName, stoppingToken), stoppingToken);
-            });
-
-            await Task.WhenAll(tasks);
+                await ReconcileConsumersAsync(stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            }
         }
         catch (Exception ex)
         {
             _appLogger.LogError("Fetcher", "Error setting up consumers for chapter queues.", ex);
+        }
+        finally
+        {
+            await StopConsumersAsync();
+        }
+    }
+
+    private async Task ReconcileConsumersAsync(CancellationToken stoppingToken)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        var activeSources = await dbContext.Sources
+            .AsNoTracking()
+            .Where(source => source.IsEnabled)
+            .OrderBy(source => source.Id)
+            .Select(source => new
+            {
+                source.Id,
+                QueueName = string.IsNullOrWhiteSpace(source.QueueName)
+                    ? $"get-chapters-{source.Slug ?? source.Id.ToString()}"
+                    : source.QueueName
+            })
+            .ToListAsync(stoppingToken);
+
+        var activeSourceIds = activeSources.Select(source => source.Id).ToHashSet();
+
+        foreach (var activeSource in activeSources)
+        {
+            if (_consumers.TryGetValue(activeSource.Id, out var existingConsumer))
+            {
+                if (existingConsumer.QueueName == activeSource.QueueName && !existingConsumer.ConsumerTask.IsCompleted)
+                    continue;
+
+                await existingConsumer.CancellationTokenSource.CancelAsync();
+                _consumers.Remove(activeSource.Id);
+            }
+
+            _manager.TryAddQueue(activeSource.QueueName);
+            
+            var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken);
+            var consumerTask = _rabbitMqClient.ConsumeAsync(activeSource.QueueName,
+                message => HandleMessageAsync(message, activeSource.QueueName, linkedCancellation.Token), linkedCancellation.Token);
+            
+            _consumers[activeSource.Id] = new QueueConsumerRegistration(activeSource.QueueName, linkedCancellation, consumerTask);
+        }
+
+        foreach (var removedSourceId in _consumers.Keys.Where(sourceId => !activeSourceIds.Contains(sourceId)).ToList())
+        {
+            await _consumers[removedSourceId].CancellationTokenSource.CancelAsync();
+            _consumers.Remove(removedSourceId);
         }
     }
 
@@ -75,7 +124,7 @@ public class FetchChaptersService : BackgroundService
         if (dto is null)
             _appLogger.LogError("Fetcher", "Failed to deserialize the message.");
         else
-            _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga '{dto.MangaName}' from '{dto.Source}'.");
+            _appLogger.LogInformation("Fetcher", $"Fetching chapters: Manga '{dto.MangaName}' from '{dto.SourceSlug ?? dto.SourceId.ToString()}'.");
         
         return dto;
     }
@@ -83,10 +132,9 @@ public class FetchChaptersService : BackgroundService
     private async Task<List<ChapterResult>> FetchChaptersAsync(ChapterQueueMessageDto dto, CancellationToken token)
     {
         using var scope = _serviceProvider.CreateScope();
-        var factory = scope.ServiceProvider.GetRequiredService<FetcherFactory>();
-        var fetcher = factory.GetChapterFetcher(dto.Source);
-        
-        return await fetcher.GetChaptersAsync(dto, token);
+        var orchestrator = scope.ServiceProvider.GetRequiredService<ScraperOrchestrator>();
+
+        return await orchestrator.FetchAsync(dto, token);
     }
 
     private async Task PublishChaptersAsync(List<ChapterResult> chapters, CancellationToken token)
@@ -101,4 +149,17 @@ public class FetchChaptersService : BackgroundService
         if (!hasMessages) _manager.IdleQueue(queueName);
     }
 
+    private async Task StopConsumersAsync()
+    {
+        foreach (var consumer in _consumers.Values)
+            await consumer.CancellationTokenSource.CancelAsync();
+
+        if (_consumers.Count > 0)
+            await Task.WhenAll(_consumers.Values.Select(consumer => consumer.ConsumerTask));
+
+        _consumers.Clear();
+    }
+
+    private sealed record QueueConsumerRegistration(string QueueName, CancellationTokenSource CancellationTokenSource, 
+        Task ConsumerTask);
 }

@@ -1,6 +1,4 @@
-using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
-using MangaUpdater.Shared.Models;
 using MediatR;
 
 namespace MangaUpdater.Services.Database.Feature.AdminServices;
@@ -24,13 +22,11 @@ public class GetAdminServicesHandler : IRequestHandler<GetAdminServicesQuery, Li
     {
         var results = new List<AdminServiceStatusDto>();
 
-        foreach (var s in Enum.GetValues<SourcesEnum>())
+        foreach (var details in _manager.GetAllExecutionDetails())
         {
-            var details = _manager.GetExecutionDetails(s);
-            var queueName = $"get-chapters-{s}";
-            var hasMessages = await _rabbit.HasMessagesInQueueAsync(queueName, cancellationToken);
+            var hasMessages = await _rabbit.HasMessagesInQueueAsync(details.QueueName, cancellationToken);
             results.Add(new AdminServiceStatusDto(
-                Name: $"ChapterDispatcher.{s}",
+                Name: $"ChapterDispatcher.{details.SourceId}",
                 Status: details.State,
                 QueueLength: hasMessages ? 1 : 0,
                 LastRunAt: null,

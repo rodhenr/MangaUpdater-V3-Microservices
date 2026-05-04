@@ -1,4 +1,3 @@
-using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MangaUpdater.Shared.Exceptions;
 using MediatR;
@@ -18,24 +17,11 @@ public class StopAdminServiceHandler : IRequestHandler<StopAdminServiceCommand, 
 
     public Task<string> Handle(StopAdminServiceCommand request, CancellationToken cancellationToken)
     {
-        if (!TryResolveSourceFromName(request.Name, out var source, out var message))
-            throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest, message);
+        if (!_manager.TryResolveSourceId(request.Name, out var sourceId))
+            throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest, "Unknown service name");
 
         // Stop is not supported; emulate with pause
-        _manager.PauseBySource(source);
+        _manager.PauseBySource(sourceId);
         return Task.FromResult("Stop is emulated as pause; full stop not supported.");
-    }
-
-    private static bool TryResolveSourceFromName(string name, out SourcesEnum source, out string error)
-    {
-        source = default;
-        error = string.Empty;
-        var candidate = name.Contains('.') ? name.Split('.').Last() : name;
-        if (!Enum.TryParse<SourcesEnum>(candidate, ignoreCase: true, out source))
-        {
-            error = "Unknown service name";
-            return false;
-        }
-        return true;
     }
 }

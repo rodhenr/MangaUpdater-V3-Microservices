@@ -62,7 +62,7 @@ public class UserMangaCollection
             x.Media.Id ?? 0,
             x.Media.IdMal ?? 0,
             x.Media.Status,
-            x.Media.AverageScore,
+            x.Media.AverageScore ?? 0,
             x.Media.CountryOfOrigin,
             x.Media.CountryOfOrigin == "JP" ? x.Media.Title.Romaji : x.Media.Title.English,
             x.Progress ?? 0,
@@ -72,7 +72,7 @@ public class UserMangaCollection
             x.Media.Genres
           ))
           .ToList() ?? [];
-      } catch (GraphQLHttpRequestException ex)
+      } catch (Exception)
       {
         return [];
       }
