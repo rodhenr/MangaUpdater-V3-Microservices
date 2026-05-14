@@ -21,7 +21,7 @@ public class CreateMangaHandler : IRequestHandler<CreateMangaCommand>
     public async Task Handle(CreateMangaCommand request, CancellationToken cancellationToken)
     {
         var mangaExists = await _context.Mangas
-            .Where(x => x.AniListId == request.Manga.AniListId || x.MyAnimeListId == request.Manga.MyAnimeListId)
+            .Where(x => x.AniListId == request.Manga.AniListId || (request.Manga.MyAnimeListId.HasValue && x.MyAnimeListId == request.Manga.MyAnimeListId))
             .FirstOrDefaultAsync(cancellationToken);
 
         if (mangaExists is not null) throw new HttpResponseException(HttpStatusCode.Conflict, "Manga already exists");
@@ -33,6 +33,8 @@ public class CreateMangaHandler : IRequestHandler<CreateMangaCommand>
             TitleEnglish = request.Manga.TitleEnglish,
             TitleRomaji = request.Manga.TitleRomaji,
             CoverUrl = request.Manga.CoverUrl,
+            IsAutoCreated = request.Manga.IsAutoCreated,
+            LastUpdate = request.Manga.LastUpdate,
         };
 
         _context.Mangas.Add(manga);

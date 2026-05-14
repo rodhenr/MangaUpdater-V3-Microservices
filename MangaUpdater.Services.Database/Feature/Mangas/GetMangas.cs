@@ -31,6 +31,8 @@ public class GetMangasHandler : IRequestHandler<GetMangasQuery, PagedResultDto<M
                 x.TitleRomaji,
                 x.TitleEnglish,
                 x.CoverUrl,
+                x.IsAutoCreated,
+                x.LastUpdate,
                 x.Timestamp
             ))
             .ToListAsync(cancellationToken);

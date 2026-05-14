@@ -41,6 +41,12 @@ public class MangaController : BaseController
         await _sender.Send(new CreateMangaCommand(request));
     }
 
+    [HttpPost("ensure")]
+    public async Task<MangaDto> EnsureManga([FromBody] EnsureMangaRequest request)
+    {
+        return await _sender.Send(new EnsureMangaCommand(request));
+    }
+
     [HttpPut("{mangaId:int}")]
     public async Task UpdateManga(int mangaId, [FromBody] UpdateMangaRequest request)
     {

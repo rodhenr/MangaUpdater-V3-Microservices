@@ -5,7 +5,7 @@ namespace MangaUpdater.Services.Database.Entities;
 
 public class Manga : BaseEntity
 {
-    public int MyAnimeListId { get; set; }
+    public int? MyAnimeListId { get; set; }
     
     public int AniListId { get; set; }
     
@@ -13,9 +13,13 @@ public class Manga : BaseEntity
     public required string TitleRomaji { get; set; }
     
     [StringLength(200)]
-    public required string TitleEnglish { get; set; }
+    public string? TitleEnglish { get; set; }
     
     public required string CoverUrl { get; set; }
+
+    public bool IsAutoCreated { get; set; }
+
+    public DateTime? LastUpdate { get; set; }
 
     public DateTime Timestamp { get; set; }
     

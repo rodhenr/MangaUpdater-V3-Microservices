@@ -30,6 +30,8 @@ public class UpdateManga : IRequestHandler<UpdateMangaCommand>
         manga.AniListId = request.Manga.AniListId;
         manga.MyAnimeListId = request.Manga.MyAnimeListId;
         manga.CoverUrl = request.Manga.CoverUrl;
+        manga.IsAutoCreated = request.Manga.IsAutoCreated;
+        manga.LastUpdate = request.Manga.LastUpdate;
         
         await _context.SaveChangesAsync(cancellationToken);
     }

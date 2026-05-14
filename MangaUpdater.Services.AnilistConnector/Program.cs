@@ -1,10 +1,27 @@
 using MangaUpdater.Shared.Middlewares;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Built-in
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+builder.Services.AddHttpClient();
+builder.Services.AddHttpClient("Database", (sp, client) =>
+{
+    var config = sp.GetRequiredService<IConfiguration>();
+    var baseUrl =
+        config["Microservices:Database"] ??
+        config["Database:BaseUrl"] ??
+        "http://localhost:5002/";
+    client.BaseAddress = new Uri(baseUrl);
+});
+
+var executingAssembly = Assembly.GetExecutingAssembly();
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(executingAssembly);
+});
 
 // Swagger 
 builder.Services.AddEndpointsApiExplorer();

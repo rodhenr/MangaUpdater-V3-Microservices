@@ -37,7 +37,7 @@ public class HttpExceptionMiddleware
 
             await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
