@@ -1,12 +1,13 @@
 using System.Net;
 using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Entities;
+using MangaUpdater.Services.Database.Feature.SourceConfigurations;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Exceptions;
 using MangaUpdater.Shared.Models;
 using MediatR;
 
-namespace MangaUpdater.Services.Database.Feature.Sources;
+namespace MangaUpdater.Services.Database.Feature.SourceApiProfiles;
 
 public record GetSourceApiProfilesQuery(int SourceId) : IRequest<List<SourceApiProfileDto>>;
 public record CreateSourceApiProfileCommand(int SourceId, CreateSourceApiProfileRequest Profile) : IRequest;

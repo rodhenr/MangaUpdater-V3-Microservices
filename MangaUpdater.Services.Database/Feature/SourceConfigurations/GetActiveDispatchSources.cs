@@ -2,7 +2,7 @@ using MangaUpdater.Services.Database.Database;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace MangaUpdater.Services.Database.Feature.Sources;
+namespace MangaUpdater.Services.Database.Feature.SourceConfigurations;
 
 public record ActiveDispatchSourceDto(int SourceId, string SourceName, string QueueName);
 

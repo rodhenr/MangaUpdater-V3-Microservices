@@ -29,4 +29,8 @@
       <Folder Include="Database\Migrations\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Feature\SourceApiProfiles\ManageSourceApiProfiles.cs" />
+    </ItemGroup>
+
 </Project>

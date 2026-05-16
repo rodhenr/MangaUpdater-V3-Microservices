@@ -4,7 +4,7 @@ using MangaUpdater.Services.Database.Entities;
 using MangaUpdater.Shared.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
-namespace MangaUpdater.Services.Database.Feature.Sources;
+namespace MangaUpdater.Services.Database.Feature.SourceConfigurations;
 
 internal static class SourceConfigurationSupport
 {

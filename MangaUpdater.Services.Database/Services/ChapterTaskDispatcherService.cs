@@ -1,6 +1,6 @@
 using System.Text.Json;
 using MangaUpdater.Services.Database.Feature.MangaSources;
-using MangaUpdater.Services.Database.Feature.Sources;
+using MangaUpdater.Services.Database.Feature.SourceConfigurations;
 using MangaUpdater.Shared.Enums;
 using MangaUpdater.Shared.Interfaces;
 using MediatR;

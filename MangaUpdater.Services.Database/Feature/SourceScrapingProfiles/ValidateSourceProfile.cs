@@ -5,12 +5,13 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Entities;
+using MangaUpdater.Services.Database.Feature.SourceConfigurations;
 using MangaUpdater.Shared.DTOs;
 using MangaUpdater.Shared.Exceptions;
 using MangaUpdater.Shared.Models;
 using MediatR;
 
-namespace MangaUpdater.Services.Database.Feature.Sources;
+namespace MangaUpdater.Services.Database.Feature.SourceScrapingProfiles;
 
 public record ValidateSourceProfileQuery(int SourceId, ValidateSourceProfileRequest Request)
     : IRequest<SourceProfileValidationResultDto>;

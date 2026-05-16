@@ -1,9 +1,9 @@
+using System.Net;
 using MangaUpdater.Services.Database.Database;
 using MangaUpdater.Services.Database.Entities;
 using MangaUpdater.Shared.Exceptions;
 using MangaUpdater.Shared.Models;
 using MediatR;
-using System.Net;
 
 namespace MangaUpdater.Services.Database.Feature.Sources;
 
